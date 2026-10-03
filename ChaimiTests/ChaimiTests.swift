@@ -3,6 +3,58 @@ import XCTest
 
 final class ChaimiTests: XCTestCase {
 
+    // MARK: 过期提醒规划
+
+    func testNotificationPlannerAggregatesPerDay() {
+        let cal = Calendar.current
+        // 固定 now = 今天 08:00,提醒时间 10:00
+        let now = cal.date(bySettingHour: 8, minute: 0, second: 0, of: .now)!
+        func day(_ offset: Int) -> Date { cal.date(byAdding: .day, value: offset, to: cal.startOfDay(for: now))! }
+        let plans = NotificationPlanner.plans(
+            items: [("菠菜", day(1)),            // 明天到期 → 今天10:00 提醒
+                    ("香蕉", day(1)),            // 同日 → 合并进同一条
+                    ("嫩豆腐", day(0)),          // 今天到期,前一天已过 → 今天10:00 补「今天到期」
+                    ("五花肉", day(3)),          // 后天+1 → 第3天前一天提醒
+                    ("大米", nil),               // 无保质期 → 忽略
+                    ("老酸奶", day(-2))],        // 已过期 → 忽略
+            hour: 10, minute: 0, now: now)
+
+        XCTAssertEqual(plans.count, 2, "今天一条聚合 + day2 一条")
+        let today = plans[0]
+        XCTAssertEqual(cal.component(.hour, from: today.fireDate), 10)
+        XCTAssertTrue(cal.isDate(today.fireDate, inSameDayAs: now))
+        XCTAssertTrue(today.body.contains("明天到期"))
+        XCTAssertTrue(today.body.contains("菠菜") && today.body.contains("香蕉"))
+        XCTAssertTrue(today.body.contains("今天到期:嫩豆腐"))
+        XCTAssertFalse(today.body.contains("老酸奶"))
+        XCTAssertTrue(cal.isDate(plans[1].fireDate, inSameDayAs: day(2)))
+        XCTAssertTrue(plans[1].body.contains("五花肉"))
+        // id 按天唯一
+        XCTAssertEqual(Set(plans.map(\.id)).count, plans.count)
+        XCTAssertTrue(plans.allSatisfy { $0.id.hasPrefix("expiry-") })
+    }
+
+    func testNotificationPlannerTruncatesLongList() {
+        let cal = Calendar.current
+        let now = cal.date(bySettingHour: 8, minute: 0, second: 0, of: .now)!
+        let tomorrow = cal.date(byAdding: .day, value: 1, to: cal.startOfDay(for: now))!
+        let items: [(String, Date?)] = (1...6).map { ("食材\($0)", tomorrow) }
+        let plans = NotificationPlanner.plans(items: items, hour: 10, minute: 0, now: now)
+        XCTAssertEqual(plans.count, 1)
+        XCTAssertTrue(plans[0].body.contains("等6样"), "超过4样要折叠为「等N样」:\(plans[0].body)")
+    }
+
+    func testNotificationPlannerSkipsPastSlot() {
+        let cal = Calendar.current
+        // now = 12:00,提醒时间 10:00:明天到期的东西今天 10:00 已过 → 顺延到期当天(明天)10:00 补报
+        let now = cal.date(bySettingHour: 12, minute: 0, second: 0, of: .now)!
+        let tomorrow = cal.date(byAdding: .day, value: 1, to: cal.startOfDay(for: now))!
+        let plans = NotificationPlanner.plans(items: [("菠菜", tomorrow)], hour: 10, minute: 0, now: now)
+        XCTAssertEqual(plans.count, 1)
+        XCTAssertTrue(cal.isDate(plans[0].fireDate, inSameDayAs: tomorrow))
+        XCTAssertTrue(plans[0].body.contains("今天到期:菠菜"))
+    }
+
     // MARK: 目录完整性
 
     func testHandFontRegistered() {

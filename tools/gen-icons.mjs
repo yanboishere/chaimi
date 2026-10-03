@@ -668,28 +668,7 @@ for (const r of recipes.recipes) {
   made++;
 }
 
-// AppIcon:纸底 + 手绘菜篮 + 柴米
-{
-  const p = new Pic("appicon");
-  p.raw.push(`<rect x="0" y="0" width="256" height="256" fill="#faf4e6"/>`);
-  p.path(`M 52 128 C 48 180 90 212 128 212 C 166 212 208 180 204 128 Z`, "#d9b98c", { hachureGap: 6 });
-  p.arc(128, 128, 150, 120, Math.PI, Math.PI * 2, false, undefined, { strokeWidth: 5 });
-  for (let i = 0; i < 4; i++) p.line(70 + i * 40, 132, 78 + i * 40, 204, { strokeWidth: 2.4 });
-  p.path(leafD(88, 126, 22, 46, -28), "#6a994e");
-  p.circle(126, 106, 54, "#e5533d", { hachureGap: 5 });
-  p.path(leafD(126, 80, 9, 18, 180), "#6a994e", { fillStyle: "solid", strokeWidth: 2 });
-  p.path(`M 156 128 C 150 96 164 72 184 64 C 180 88 182 110 174 130 Z`, "#e9c46a", { hachureGap: 5 });
-  p.text("柴米", 128, 246, 42, { rotate: -2 });
-  const png = renderPNG(p.svg(), 1024);
-  const d = path.join(xcassets, "AppIcon.appiconset");
-  fs.mkdirSync(d, { recursive: true });
-  fs.writeFileSync(path.join(d, "appicon.png"), png);
-  fs.writeFileSync(path.join(d, "Contents.json"), JSON.stringify({
-    images: [{ filename: "appicon.png", idiom: "universal", platform: "ios", size: "1024x1024" }],
-    info: { author: "xcode", version: 1 },
-  }, null, 2));
-  made++;
-}
+// AppIcon 由 tools/gen-appicon.mjs 单独生成,这里不再覆盖
 
 // AccentColor + PaperBackground 色板
 function colorset(name, hex, darkHex) {
@@ -700,7 +679,7 @@ function colorset(name, hex, darkHex) {
   if (darkHex) images.push({ idiom: "universal", appearances: [{ appearance: "luminosity", value: "dark" }], color: toC(darkHex) });
   fs.writeFileSync(path.join(d, "Contents.json"), JSON.stringify({ colors: images, info: { author: "xcode", version: 1 } }, null, 2));
 }
-colorset("AccentColor", "#bc4749");
+colorset("AccentColor", "#4aa3db", "#63b5e5");
 colorset("PaperBackground", "#faf4e6", "#201b14");
 colorset("PaperCard", "#fffdf4", "#2a241b");
 colorset("InkPrimary", "#4a3f35", "#e8dfc9");

@@ -139,6 +139,9 @@ struct PantryListView: View {
             .onAppear {
                 if DemoLaunch.wantsScan { scanMode = .receipt }
             }
+            .onReceive(NotificationCenter.default.publisher(for: .chaimiOpenExpiring)) { _ in
+                withAnimation(.snappy) { filter = .expiring }
+            }
         }
     }
 

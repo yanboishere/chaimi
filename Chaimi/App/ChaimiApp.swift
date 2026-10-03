@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import UserNotifications
 
 @main
 struct ChaimiApp: App {
@@ -11,6 +12,7 @@ struct ChaimiApp: App {
         } catch {
             fatalError("SwiftData 初始化失败: \(error)")
         }
+        UNUserNotificationCenter.current().delegate = ChaimiNotificationDelegate.shared
         // 截图/演示模式:跳过首启弹窗,库存为空时自动填入示例数据
         if ProcessInfo.processInfo.arguments.contains("-demoData") {
             UserDefaults.standard.set(true, forKey: "didOfferSampleData")

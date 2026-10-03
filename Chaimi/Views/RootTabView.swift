@@ -4,6 +4,8 @@ import SwiftData
 struct RootTabView: View {
     @AppStorage("didOfferSampleData") private var didOfferSampleData = false
     @Environment(\.modelContext) private var context
+    @Environment(\.scenePhase) private var scenePhase
+    @Query private var allItems: [PantryItem]
     @State private var selection: Int = DemoLaunch.initialTab
 
     var body: some View {
@@ -28,13 +30,35 @@ struct RootTabView: View {
             }
             .interactiveDismissDisabled()
         }
+        // 退到后台时按最新库存重排过期提醒
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .background {
+                let snapshot = allItems
+                Task { await NotificationService.reschedule(items: snapshot) }
+            }
+        }
+        // 点过期提醒 → 回库存页(库存页自己会切到临期筛选)
+        .onReceive(NotificationCenter.default.publisher(for: .chaimiOpenExpiring)) { _ in
+            selection = 0
+        }
+        .task {
+            if DemoLaunch.wantsNotify {
+                UserDefaults.standard.set(true, forKey: "expiryReminderEnabled")
+                // provisional:不弹授权框,通知静默进通知中心,适合演示/截图
+                let center = UNUserNotificationCenter.current()
+                _ = try? await center.requestAuthorization(options: [.alert, .sound, .provisional])
+                await NotificationService.reschedule(items: allItems)
+                await NotificationService.scheduleDemoPing()
+            }
+        }
     }
 }
 
-/// 截图/演示用的启动参数:-demoTab N 选 Tab,-demoData 预填示例数据,-demoScan 自动打开小票识别
+/// 截图/演示用的启动参数:-demoTab N 选 Tab,-demoData 预填示例数据,-demoScan 自动打开小票识别,-demoNotify 排演过期提醒
 enum DemoLaunch {
     static var isDemo: Bool { ProcessInfo.processInfo.arguments.contains("-demoData") }
     static var wantsScan: Bool { ProcessInfo.processInfo.arguments.contains("-demoScan") }
+    static var wantsNotify: Bool { ProcessInfo.processInfo.arguments.contains("-demoNotify") }
     static var initialTab: Int {
         let args = ProcessInfo.processInfo.arguments
         guard let i = args.firstIndex(of: "-demoTab"), i + 1 < args.count else { return 0 }

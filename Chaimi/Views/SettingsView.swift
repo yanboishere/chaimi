@@ -5,11 +5,18 @@ import SwiftData
 
 struct SettingsView: View {
     @Environment(\.modelContext) private var context
+    @Query private var allItems: [PantryItem]
 
     @AppStorage("dailyCalorieLimit") private var dailyLimit: Double = 0
     @AppStorage("bodyProfile") private var profileJSON: String = ""
     @AppStorage("claudeModel") private var model: String = "claude-opus-5-5"
     @AppStorage("pantryGroupMode") private var pantryGroupMode = "category"
+    @AppStorage("expiryReminderEnabled") private var reminderEnabled = false
+    /// 从零点起的分钟数,默认 10:00
+    @AppStorage("expiryReminderTime") private var reminderMinutes: Int = 600
+
+    @State private var reminderDenied = false
+    @State private var pendingPreviews: [NotificationService.PendingPreview] = []
 
     @State private var profile = BodyProfile()
     @State private var keyInput = ""
@@ -28,6 +35,7 @@ struct SettingsView: View {
                 PaperBackground()
                 Form {
                     pantrySection
+                    reminderSection
                     goalSection
                     bodySection
                     aiSection
@@ -52,6 +60,81 @@ struct SettingsView: View {
             } label: { Text("库存分组").font(.hand(16)) }
         } header: { Text("库存显示").font(.hand(13)) }
         footer: { Text("主界面的分组可以点标题折叠/展开,折叠状态会记住。").font(.hand(11)) }
+    }
+
+    // MARK: 过期提醒
+
+    private var reminderTimeBinding: Binding<Date> {
+        Binding(
+            get: {
+                Calendar.current.date(bySettingHour: reminderMinutes / 60, minute: reminderMinutes % 60, second: 0, of: .now) ?? .now
+            },
+            set: { date in
+                let c = Calendar.current.dateComponents([.hour, .minute], from: date)
+                reminderMinutes = (c.hour ?? 10) * 60 + (c.minute ?? 0)
+            })
+    }
+
+    private var reminderSection: some View {
+        Section {
+            Toggle(isOn: $reminderEnabled) {
+                Text("到期前一天提醒我").font(.hand(16))
+            }
+            if reminderEnabled {
+                DatePicker(selection: reminderTimeBinding, displayedComponents: .hourAndMinute) {
+                    Text("提醒时间").font(.hand(16))
+                }
+                if reminderDenied {
+                    Label("通知权限被关了,去 系统设置 → 柴米 → 通知 里打开", systemImage: "bell.slash")
+                        .font(.hand(13)).foregroundStyle(Color.warnOrange)
+                }
+                if !pendingPreviews.isEmpty {
+                    DisclosureGroup {
+                        ForEach(pendingPreviews.prefix(7)) { p in
+                            VStack(alignment: .leading, spacing: 2) {
+                                if let d = p.date {
+                                    Text(d.formatted(.dateTime.month().day().weekday().hour().minute()))
+                                        .font(.hand(12)).foregroundStyle(Color.accentColor)
+                                }
+                                Text(p.body).font(.hand(13)).foregroundStyle(.secondary)
+                            }
+                            .padding(.vertical, 2)
+                        }
+                    } label: {
+                        Text("已排 \(pendingPreviews.count) 条提醒").font(.hand(14)).foregroundStyle(.secondary)
+                    }
+                }
+            }
+        } header: { Text("过期提醒").font(.hand(13)) }
+        footer: {
+            Text("每天最多一条,汇总列出明天到期的食材;来不及提前说的(今天才到期)当天补一条。改库存后会自动重排。")
+                .font(.hand(11))
+        }
+        .onChange(of: reminderEnabled) { _, on in
+            Task {
+                if on {
+                    let granted = await NotificationService.authorize()
+                    if granted {
+                        reminderDenied = false
+                    } else {
+                        reminderDenied = await NotificationService.authorizationDenied()
+                    }
+                }
+                await NotificationService.reschedule(items: allItems)
+                pendingPreviews = await NotificationService.pendingPreviews()
+            }
+        }
+        .onChange(of: reminderMinutes) { _, _ in
+            Task {
+                await NotificationService.reschedule(items: allItems)
+                pendingPreviews = await NotificationService.pendingPreviews()
+            }
+        }
+        .task {
+            let denied = await NotificationService.authorizationDenied()
+            reminderDenied = denied && reminderEnabled
+            pendingPreviews = await NotificationService.pendingPreviews()
+        }
     }
 
     // MARK: 卡路里目标

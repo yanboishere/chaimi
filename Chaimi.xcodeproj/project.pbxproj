@@ -26,6 +26,7 @@
 		BBB97AE231AF2F2AE2CDC990 /* ReceiptParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C75034D03047FD33DBE097D /* ReceiptParser.swift */; };
 		BD1EF275AD7315DADAAD7F08 /* ZCOOLKuaiLe-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 94F502C5AFC789FDD138D8EF /* ZCOOLKuaiLe-Regular.ttf */; };
 		C3A9476ABB7D2246AD471A33 /* CatalogPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7D0B46DB9D864EC8DB48762 /* CatalogPickerView.swift */; };
+		C5612C3906F2996C66B794C9 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4075A585F7653F6E0AC2FEED /* NotificationService.swift */; };
 		D4EB9D10687625B3E9A8E36B /* ChaimiTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9929D31D0C712C473F65463B /* ChaimiTests.swift */; };
 		DBFF859A0AA533C66FE5DECB /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555984C9368595047824892 /* Theme.swift */; };
 		EAD64849A8BBEF530BC91361 /* PantryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EE3811ECAB39AC7C8636F78 /* PantryListView.swift */; };
@@ -55,6 +56,7 @@
 		33924BA9BDAAE9B9D456CC2A /* ClaudeAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeAPI.swift; sourceTree = "<group>"; };
 		3682E718674B64846AFDA143 /* recipes.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = recipes.json; sourceTree = "<group>"; };
 		3B598EF6ECB57C50CE85261A /* AISearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AISearchView.swift; sourceTree = "<group>"; };
+		4075A585F7653F6E0AC2FEED /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		429E1D06407F7712622A5DA9 /* KeychainStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainStore.swift; sourceTree = "<group>"; };
 		4D587B1AF55AABE14A803AA4 /* catalog.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = catalog.json; sourceTree = "<group>"; };
 		5164DDC9B3D05CB1D532B865 /* Catalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Catalog.swift; sourceTree = "<group>"; };
@@ -85,6 +87,7 @@
 			children = (
 				33924BA9BDAAE9B9D456CC2A /* ClaudeAPI.swift */,
 				429E1D06407F7712622A5DA9 /* KeychainStore.swift */,
+				4075A585F7653F6E0AC2FEED /* NotificationService.swift */,
 				8EC933426CE2113673499DB0 /* OCRService.swift */,
 				8C75034D03047FD33DBE097D /* ReceiptParser.swift */,
 				809D26391D9DA75293870133 /* RecipeRecommender.swift */,
@@ -315,6 +318,7 @@
 				F06CD55D20EB38E1355971EB /* ClaudeAPI.swift in Sources */,
 				ED9F38F0556351A2221E261C /* KeychainStore.swift in Sources */,
 				18294D0626CFE58FA110215D /* LocalRecipe.swift in Sources */,
+				C5612C3906F2996C66B794C9 /* NotificationService.swift in Sources */,
 				440006EB84CF358614A0DD6C /* OCRService.swift in Sources */,
 				265EFE6773E87E04681604C0 /* PantryItem.swift in Sources */,
 				EAD64849A8BBEF530BC91361 /* PantryListView.swift in Sources */,
