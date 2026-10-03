@@ -1,0 +1,60 @@
+name: Chaimi
+options:
+  bundleIdPrefix: ng.yanbowa
+  deploymentTarget:
+    iOS: "17.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "5.10"
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    DEVELOPMENT_TEAM: ""
+    CODE_SIGN_STYLE: Automatic
+targets:
+  Chaimi:
+    type: application
+    platform: iOS
+    sources:
+      - path: Chaimi
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: ng.yanbowa.chaimi
+        INFOPLIST_KEY_CFBundleDisplayName: 柴米
+        TARGETED_DEVICE_FAMILY: "1"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+    info:
+      path: Chaimi/Info.plist
+      properties:
+        UILaunchScreen:
+          UIColorName: PaperBackground
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+        NSCameraUsageDescription: 柴米需要使用相机拍摄购物小票或食材照片,用于识别入库。
+        NSPhotoLibraryUsageDescription: 柴米需要访问相册以选择小票或食材照片,用于识别入库。
+        UIAppFonts:
+          - ZCOOLKuaiLe-Regular.ttf
+        ITSAppUsesNonExemptEncryption: false
+  ChaimiTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: ChaimiTests
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: true
+    dependencies:
+      - target: Chaimi
+schemes:
+  Chaimi:
+    build:
+      targets:
+        Chaimi: all
+        ChaimiTests: [test]
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets:
+        - ChaimiTests

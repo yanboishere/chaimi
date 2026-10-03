@@ -1,0 +1,9 @@
+{
+  "name": "chaimi-tools",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "roughjs": "^4.6.6",
+    "@resvg/resvg-js": "^2.6.2"
+  }
+}

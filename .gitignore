@@ -1,0 +1,23 @@
+# macOS
+.DS_Store
+
+# Xcode
+build/
+DerivedData/
+*.xcresult
+xcuserdata/
+*.xcuserstate
+*.xcscmblueprint
+
+# SwiftPM
+.build/
+.swiftpm/
+
+# Node (icon generator)
+node_modules/
+tools/node_modules/
+npm-debug.log*
+
+# Secrets — never commit API keys
+*.apikey
+.env

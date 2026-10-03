@@ -1,0 +1,580 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 54;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		006E88A495EF767657ED07D1 /* RootTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32BFEDCDA2F3CFC8F4B8909F /* RootTabView.swift */; };
+		07223FFF97FF9BA28895FD00 /* catalog.json in Resources */ = {isa = PBXBuildFile; fileRef = 4D587B1AF55AABE14A803AA4 /* catalog.json */; };
+		148FD4C6C8E14541FDCF54BD /* RecipeRecommender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 809D26391D9DA75293870133 /* RecipeRecommender.swift */; };
+		18294D0626CFE58FA110215D /* LocalRecipe.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC050C3FC9D1B6170ED4F903 /* LocalRecipe.swift */; };
+		1AF21028E043AC2F99DBD28D /* ZCOOLKuaiLe-OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = 59F9D294F7120B81DA57DF39 /* ZCOOLKuaiLe-OFL.txt */; };
+		265EFE6773E87E04681604C0 /* PantryItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 724B256B8366082682ADFCA4 /* PantryItem.swift */; };
+		2B397143217677F2270C8278 /* RecipeHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B0043B6CC4C2B8C06F28757 /* RecipeHomeView.swift */; };
+		311F5FF7CCA383519A7E5D7C /* ScanSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E07823373E6DBBC2A6C74729 /* ScanSheet.swift */; };
+		3A4D83C3EB334E2C2784FEBD /* ChaimiApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 551F0382E0019D87E8A52378 /* ChaimiApp.swift */; };
+		440006EB84CF358614A0DD6C /* OCRService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EC933426CE2113673499DB0 /* OCRService.swift */; };
+		555CB58F187421676722EB47 /* SampleReceipt.png in Resources */ = {isa = PBXBuildFile; fileRef = E97A99C3FFDFA0C5DAFF21C0 /* SampleReceipt.png */; };
+		5A6A93BFDD7873307357E64A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1FDCA5B3DE5C2397CB6D1535 /* Assets.xcassets */; };
+		5FA5070E4E80A64288261F80 /* CalorieEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80DEF950DB8EF65BB3C447EF /* CalorieEntry.swift */; };
+		61B9D4AA9EBFC8B5B0D5D34F /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8FAABB7B8B368DBF35E21F3 /* SettingsView.swift */; };
+		6E164C70B11EB704AFE32F15 /* CalorieView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 079C77936FA67B8949A70DD4 /* CalorieView.swift */; };
+		82075DC9D025D6DBD04111FA /* Catalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5164DDC9B3D05CB1D532B865 /* Catalog.swift */; };
+		BBB97AE231AF2F2AE2CDC990 /* ReceiptParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C75034D03047FD33DBE097D /* ReceiptParser.swift */; };
+		BD1EF275AD7315DADAAD7F08 /* ZCOOLKuaiLe-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 94F502C5AFC789FDD138D8EF /* ZCOOLKuaiLe-Regular.ttf */; };
+		C3A9476ABB7D2246AD471A33 /* CatalogPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7D0B46DB9D864EC8DB48762 /* CatalogPickerView.swift */; };
+		D4EB9D10687625B3E9A8E36B /* ChaimiTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9929D31D0C712C473F65463B /* ChaimiTests.swift */; };
+		DBFF859A0AA533C66FE5DECB /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555984C9368595047824892 /* Theme.swift */; };
+		EAD64849A8BBEF530BC91361 /* PantryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EE3811ECAB39AC7C8636F78 /* PantryListView.swift */; };
+		ED9F38F0556351A2221E261C /* KeychainStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 429E1D06407F7712622A5DA9 /* KeychainStore.swift */; };
+		F06CD55D20EB38E1355971EB /* ClaudeAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33924BA9BDAAE9B9D456CC2A /* ClaudeAPI.swift */; };
+		F2DA6DDC7E99F5AC4B76BC23 /* AISearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B598EF6ECB57C50CE85261A /* AISearchView.swift */; };
+		F3B0B780EE8415EE64A3F8D5 /* recipes.json in Resources */ = {isa = PBXBuildFile; fileRef = 3682E718674B64846AFDA143 /* recipes.json */; };
+		FA26A51291217D57406F7526 /* BodyProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DBCA0263409D94B2238E2C8 /* BodyProfile.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		F5B3981ADBEA61AB196B6E96 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0F9C375BABFBFE21BFED40C1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 200BD729F3915975558C98A5;
+			remoteInfo = Chaimi;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		079C77936FA67B8949A70DD4 /* CalorieView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalorieView.swift; sourceTree = "<group>"; };
+		1DBCA0263409D94B2238E2C8 /* BodyProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodyProfile.swift; sourceTree = "<group>"; };
+		1FDCA5B3DE5C2397CB6D1535 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		2B0043B6CC4C2B8C06F28757 /* RecipeHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeHomeView.swift; sourceTree = "<group>"; };
+		32BFEDCDA2F3CFC8F4B8909F /* RootTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootTabView.swift; sourceTree = "<group>"; };
+		33924BA9BDAAE9B9D456CC2A /* ClaudeAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeAPI.swift; sourceTree = "<group>"; };
+		3682E718674B64846AFDA143 /* recipes.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = recipes.json; sourceTree = "<group>"; };
+		3B598EF6ECB57C50CE85261A /* AISearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AISearchView.swift; sourceTree = "<group>"; };
+		429E1D06407F7712622A5DA9 /* KeychainStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainStore.swift; sourceTree = "<group>"; };
+		4D587B1AF55AABE14A803AA4 /* catalog.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = catalog.json; sourceTree = "<group>"; };
+		5164DDC9B3D05CB1D532B865 /* Catalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Catalog.swift; sourceTree = "<group>"; };
+		551F0382E0019D87E8A52378 /* ChaimiApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChaimiApp.swift; sourceTree = "<group>"; };
+		59F9D294F7120B81DA57DF39 /* ZCOOLKuaiLe-OFL.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "ZCOOLKuaiLe-OFL.txt"; sourceTree = "<group>"; };
+		5EE3811ECAB39AC7C8636F78 /* PantryListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryListView.swift; sourceTree = "<group>"; };
+		724B256B8366082682ADFCA4 /* PantryItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryItem.swift; sourceTree = "<group>"; };
+		7555984C9368595047824892 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		809D26391D9DA75293870133 /* RecipeRecommender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeRecommender.swift; sourceTree = "<group>"; };
+		80DEF950DB8EF65BB3C447EF /* CalorieEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalorieEntry.swift; sourceTree = "<group>"; };
+		8C75034D03047FD33DBE097D /* ReceiptParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptParser.swift; sourceTree = "<group>"; };
+		8EC933426CE2113673499DB0 /* OCRService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OCRService.swift; sourceTree = "<group>"; };
+		94F502C5AFC789FDD138D8EF /* ZCOOLKuaiLe-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ZCOOLKuaiLe-Regular.ttf"; sourceTree = "<group>"; };
+		981E9A80D0C1C34444B1C10B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		9929D31D0C712C473F65463B /* ChaimiTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChaimiTests.swift; sourceTree = "<group>"; };
+		9CCD5DB4DBD65FDC2EFF2AF5 /* ChaimiTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = ChaimiTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		BE4937300508EBAF2FEC004F /* Chaimi.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Chaimi.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C7D0B46DB9D864EC8DB48762 /* CatalogPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogPickerView.swift; sourceTree = "<group>"; };
+		CC050C3FC9D1B6170ED4F903 /* LocalRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalRecipe.swift; sourceTree = "<group>"; };
+		D8FAABB7B8B368DBF35E21F3 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		E07823373E6DBBC2A6C74729 /* ScanSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanSheet.swift; sourceTree = "<group>"; };
+		E97A99C3FFDFA0C5DAFF21C0 /* SampleReceipt.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SampleReceipt.png; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		0609B21DDBA77CD743A5AC5E /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				33924BA9BDAAE9B9D456CC2A /* ClaudeAPI.swift */,
+				429E1D06407F7712622A5DA9 /* KeychainStore.swift */,
+				8EC933426CE2113673499DB0 /* OCRService.swift */,
+				8C75034D03047FD33DBE097D /* ReceiptParser.swift */,
+				809D26391D9DA75293870133 /* RecipeRecommender.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		103C283D1A64ADD763546A3C /* Chaimi */ = {
+			isa = PBXGroup;
+			children = (
+				1FDCA5B3DE5C2397CB6D1535 /* Assets.xcassets */,
+				981E9A80D0C1C34444B1C10B /* Info.plist */,
+				BD390BB87CEE5F2630D8F342 /* App */,
+				A1F88E4A7D5FD62D3EFD6B2D /* Fonts */,
+				F9183C354068F9ED1CCA4997 /* Models */,
+				545FF776DDFDC7753A930876 /* Resources */,
+				0609B21DDBA77CD743A5AC5E /* Services */,
+				DD2435CD2F1ECFD7C954063B /* Views */,
+			);
+			path = Chaimi;
+			sourceTree = "<group>";
+		};
+		21D005528C0A610B6EB7F0B1 /* Recipes */ = {
+			isa = PBXGroup;
+			children = (
+				3B598EF6ECB57C50CE85261A /* AISearchView.swift */,
+				2B0043B6CC4C2B8C06F28757 /* RecipeHomeView.swift */,
+			);
+			path = Recipes;
+			sourceTree = "<group>";
+		};
+		545FF776DDFDC7753A930876 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				4D587B1AF55AABE14A803AA4 /* catalog.json */,
+				3682E718674B64846AFDA143 /* recipes.json */,
+				E97A99C3FFDFA0C5DAFF21C0 /* SampleReceipt.png */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		742E10BAD270A11A504CE12D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				BE4937300508EBAF2FEC004F /* Chaimi.app */,
+				9CCD5DB4DBD65FDC2EFF2AF5 /* ChaimiTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		7D9048D13B22E6F631E0FEF3 /* Calories */ = {
+			isa = PBXGroup;
+			children = (
+				079C77936FA67B8949A70DD4 /* CalorieView.swift */,
+			);
+			path = Calories;
+			sourceTree = "<group>";
+		};
+		81F703085285E6DE9F8B461A = {
+			isa = PBXGroup;
+			children = (
+				103C283D1A64ADD763546A3C /* Chaimi */,
+				E4AFEA7A30975058D3267834 /* ChaimiTests */,
+				742E10BAD270A11A504CE12D /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A1F88E4A7D5FD62D3EFD6B2D /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				59F9D294F7120B81DA57DF39 /* ZCOOLKuaiLe-OFL.txt */,
+				94F502C5AFC789FDD138D8EF /* ZCOOLKuaiLe-Regular.ttf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
+		BD390BB87CEE5F2630D8F342 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				551F0382E0019D87E8A52378 /* ChaimiApp.swift */,
+				7555984C9368595047824892 /* Theme.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		DD2435CD2F1ECFD7C954063B /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				32BFEDCDA2F3CFC8F4B8909F /* RootTabView.swift */,
+				D8FAABB7B8B368DBF35E21F3 /* SettingsView.swift */,
+				7D9048D13B22E6F631E0FEF3 /* Calories */,
+				F2D3EF3AFC1FC2DFED0A30C5 /* Pantry */,
+				21D005528C0A610B6EB7F0B1 /* Recipes */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		E4AFEA7A30975058D3267834 /* ChaimiTests */ = {
+			isa = PBXGroup;
+			children = (
+				9929D31D0C712C473F65463B /* ChaimiTests.swift */,
+			);
+			path = ChaimiTests;
+			sourceTree = "<group>";
+		};
+		F2D3EF3AFC1FC2DFED0A30C5 /* Pantry */ = {
+			isa = PBXGroup;
+			children = (
+				C7D0B46DB9D864EC8DB48762 /* CatalogPickerView.swift */,
+				5EE3811ECAB39AC7C8636F78 /* PantryListView.swift */,
+				E07823373E6DBBC2A6C74729 /* ScanSheet.swift */,
+			);
+			path = Pantry;
+			sourceTree = "<group>";
+		};
+		F9183C354068F9ED1CCA4997 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				1DBCA0263409D94B2238E2C8 /* BodyProfile.swift */,
+				80DEF950DB8EF65BB3C447EF /* CalorieEntry.swift */,
+				5164DDC9B3D05CB1D532B865 /* Catalog.swift */,
+				CC050C3FC9D1B6170ED4F903 /* LocalRecipe.swift */,
+				724B256B8366082682ADFCA4 /* PantryItem.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		200BD729F3915975558C98A5 /* Chaimi */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 604B58B0009B78B0EE5E7418 /* Build configuration list for PBXNativeTarget "Chaimi" */;
+			buildPhases = (
+				3E7D2BDCCA684B9A2B286BCA /* Sources */,
+				8850687ABBA2D17268E83108 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Chaimi;
+			productName = Chaimi;
+			productReference = BE4937300508EBAF2FEC004F /* Chaimi.app */;
+			productType = "com.apple.product-type.application";
+		};
+		B51A1583AD82DEB4F185DCF4 /* ChaimiTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 76EBF5F77002FC4DFC3D2C7B /* Build configuration list for PBXNativeTarget "ChaimiTests" */;
+			buildPhases = (
+				7493054771EC7CCE09358280 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4A8EC54FD22D61C76D30C38E /* PBXTargetDependency */,
+			);
+			name = ChaimiTests;
+			productName = ChaimiTests;
+			productReference = 9CCD5DB4DBD65FDC2EFF2AF5 /* ChaimiTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0F9C375BABFBFE21BFED40C1 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					200BD729F3915975558C98A5 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+					B51A1583AD82DEB4F185DCF4 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = F9C890A3E0855CEAA9A473FC /* Build configuration list for PBXProject "Chaimi" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 81F703085285E6DE9F8B461A;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				200BD729F3915975558C98A5 /* Chaimi */,
+				B51A1583AD82DEB4F185DCF4 /* ChaimiTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		8850687ABBA2D17268E83108 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5A6A93BFDD7873307357E64A /* Assets.xcassets in Resources */,
+				555CB58F187421676722EB47 /* SampleReceipt.png in Resources */,
+				1AF21028E043AC2F99DBD28D /* ZCOOLKuaiLe-OFL.txt in Resources */,
+				BD1EF275AD7315DADAAD7F08 /* ZCOOLKuaiLe-Regular.ttf in Resources */,
+				07223FFF97FF9BA28895FD00 /* catalog.json in Resources */,
+				F3B0B780EE8415EE64A3F8D5 /* recipes.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		3E7D2BDCCA684B9A2B286BCA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F2DA6DDC7E99F5AC4B76BC23 /* AISearchView.swift in Sources */,
+				FA26A51291217D57406F7526 /* BodyProfile.swift in Sources */,
+				5FA5070E4E80A64288261F80 /* CalorieEntry.swift in Sources */,
+				6E164C70B11EB704AFE32F15 /* CalorieView.swift in Sources */,
+				82075DC9D025D6DBD04111FA /* Catalog.swift in Sources */,
+				C3A9476ABB7D2246AD471A33 /* CatalogPickerView.swift in Sources */,
+				3A4D83C3EB334E2C2784FEBD /* ChaimiApp.swift in Sources */,
+				F06CD55D20EB38E1355971EB /* ClaudeAPI.swift in Sources */,
+				ED9F38F0556351A2221E261C /* KeychainStore.swift in Sources */,
+				18294D0626CFE58FA110215D /* LocalRecipe.swift in Sources */,
+				440006EB84CF358614A0DD6C /* OCRService.swift in Sources */,
+				265EFE6773E87E04681604C0 /* PantryItem.swift in Sources */,
+				EAD64849A8BBEF530BC91361 /* PantryListView.swift in Sources */,
+				BBB97AE231AF2F2AE2CDC990 /* ReceiptParser.swift in Sources */,
+				2B397143217677F2270C8278 /* RecipeHomeView.swift in Sources */,
+				148FD4C6C8E14541FDCF54BD /* RecipeRecommender.swift in Sources */,
+				006E88A495EF767657ED07D1 /* RootTabView.swift in Sources */,
+				311F5FF7CCA383519A7E5D7C /* ScanSheet.swift in Sources */,
+				61B9D4AA9EBFC8B5B0D5D34F /* SettingsView.swift in Sources */,
+				DBFF859A0AA533C66FE5DECB /* Theme.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7493054771EC7CCE09358280 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D4EB9D10687625B3E9A8E36B /* ChaimiTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		4A8EC54FD22D61C76D30C38E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 200BD729F3915975558C98A5 /* Chaimi */;
+			targetProxy = F5B3981ADBEA61AB196B6E96 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		3C2C0DD77718AD09AE1260DC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.10;
+			};
+			name = Debug;
+		};
+		4EE898A1F405C1E7FC4238E6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = Chaimi/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "柴米";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = ng.yanbowa.chaimi;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		5E1B8333230792C1CEE6071B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = ng.yanbowa.ChaimiTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Chaimi.app/Chaimi";
+			};
+			name = Release;
+		};
+		7E4B3331FE829BA825AAD0A1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = Chaimi/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "柴米";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = ng.yanbowa.chaimi;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		F8DFE36BCB7E082253412B21 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = ng.yanbowa.ChaimiTests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Chaimi.app/Chaimi";
+			};
+			name = Debug;
+		};
+		FE65BDBA322DC9DDF9C111E9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.10;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		604B58B0009B78B0EE5E7418 /* Build configuration list for PBXNativeTarget "Chaimi" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4EE898A1F405C1E7FC4238E6 /* Debug */,
+				7E4B3331FE829BA825AAD0A1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		76EBF5F77002FC4DFC3D2C7B /* Build configuration list for PBXNativeTarget "ChaimiTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F8DFE36BCB7E082253412B21 /* Debug */,
+				5E1B8333230792C1CEE6071B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		F9C890A3E0855CEAA9A473FC /* Build configuration list for PBXProject "Chaimi" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3C2C0DD77718AD09AE1260DC /* Debug */,
+				FE65BDBA322DC9DDF9C111E9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0F9C375BABFBFE21BFED40C1 /* Project object */;
+}
