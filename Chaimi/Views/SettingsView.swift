@@ -9,6 +9,7 @@ struct SettingsView: View {
     @AppStorage("dailyCalorieLimit") private var dailyLimit: Double = 0
     @AppStorage("bodyProfile") private var profileJSON: String = ""
     @AppStorage("claudeModel") private var model: String = "claude-opus-5-5"
+    @AppStorage("pantryGroupMode") private var pantryGroupMode = "category"
 
     @State private var profile = BodyProfile()
     @State private var keyInput = ""
@@ -26,6 +27,7 @@ struct SettingsView: View {
             ZStack {
                 PaperBackground()
                 Form {
+                    pantrySection
                     goalSection
                     bodySection
                     aiSection
@@ -38,6 +40,18 @@ struct SettingsView: View {
             .onAppear { profile = BodyProfile.load(from: profileJSON) }
             .onChange(of: profile) { _, newValue in profileJSON = newValue.json }
         }
+    }
+
+    // MARK: 库存显示
+
+    private var pantrySection: some View {
+        Section {
+            Picker(selection: $pantryGroupMode) {
+                Text("按种类(蔬菜/肉禽蛋/调味品…)").tag("category")
+                Text("按存放(冷藏/常温/冷冻)").tag("storage")
+            } label: { Text("库存分组").font(.hand(16)) }
+        } header: { Text("库存显示").font(.hand(13)) }
+        footer: { Text("主界面的分组可以点标题折叠/展开,折叠状态会记住。").font(.hand(11)) }
     }
 
     // MARK: 卡路里目标

@@ -5,9 +5,14 @@ import SwiftData
 
 struct PantryListView: View {
     enum Filter: String, CaseIterable { case all = "全部", expiring = "临期", expired = "已过期" }
+    enum GroupMode: String { case category, storage }
 
     @Query(sort: \PantryItem.expiryDate) private var items: [PantryItem]
     @Environment(\.modelContext) private var context
+
+    @AppStorage("pantryGroupMode") private var groupModeRaw = GroupMode.category.rawValue
+    /// 展开的分组 id,逗号分隔持久化
+    @AppStorage("pantryExpandedGroups") private var expandedRaw = ""
 
     @State private var filter: Filter = .all
     @State private var categoryFilter: String? = nil
@@ -15,6 +20,8 @@ struct PantryListView: View {
     @State private var showCatalogPicker = false
     @State private var scanMode: ScanSheetMode? = nil
     @State private var editingItem: PantryItem? = nil
+
+    private var groupMode: GroupMode { GroupMode(rawValue: groupModeRaw) ?? .category }
 
     private var filtered: [PantryItem] {
         items.filter { item in
@@ -29,23 +36,65 @@ struct PantryListView: View {
         }
     }
 
-    private var grouped: [(CatalogCategory, [PantryItem])] {
-        let dict = Dictionary(grouping: filtered, by: \.categoryId)
-        return Catalog.shared.categories.compactMap { cat in
-            guard let rows = dict[cat.id], !rows.isEmpty else { return nil }
-            return (cat, rows)
+    // MARK: 分组
+
+    private struct GroupSection: Identifiable {
+        let id: String
+        let title: String
+        let emoji: String?
+        let items: [PantryItem]
+        var urgentCount: Int { items.filter { if case .fresh = $0.freshness { return false }; return true }.count }
+    }
+
+    private var sections: [GroupSection] {
+        switch groupMode {
+        case .storage:
+            return StorageKind.allCases.compactMap { kind in
+                let rows = filtered.filter { $0.storage == kind }
+                guard !rows.isEmpty else { return nil }
+                return GroupSection(id: "st_\(kind.rawValue)", title: kind.label, emoji: kind.emoji, items: rows)
+            }
+        case .category:
+            let dict = Dictionary(grouping: filtered, by: \.categoryId)
+            var out = Catalog.shared.categories.compactMap { cat -> GroupSection? in
+                guard let rows = dict[cat.id], !rows.isEmpty else { return nil }
+                return GroupSection(id: "cat_\(cat.id)", title: cat.name, emoji: nil, items: rows)
+            }
+            if let other = dict["other"], !other.isEmpty {
+                out.append(GroupSection(id: "cat_other", title: "其他", emoji: nil, items: other))
+            }
+            return out
         }
+    }
+
+    /// 搜索或筛选时强制全部展开,方便直接看到结果
+    private var forceExpanded: Bool { !searchText.isEmpty || filter != .all || categoryFilter != nil }
+
+    private var expandedIds: Set<String> {
+        Set(expandedRaw.split(separator: ",").map(String.init))
+    }
+    private func isExpanded(_ id: String) -> Bool { forceExpanded || expandedIds.contains(id) }
+    private func toggle(_ id: String) {
+        var s = expandedIds
+        if s.contains(id) { s.remove(id) } else { s.insert(id) }
+        expandedRaw = s.sorted().joined(separator: ",")
+    }
+    private var allExpanded: Bool { sections.allSatisfy { expandedIds.contains($0.id) } }
+    private func toggleAll() {
+        expandedRaw = allExpanded ? "" : sections.map(\.id).sorted().joined(separator: ",")
     }
 
     private var expiringCount: Int { items.filter { if case .expiring = $0.freshness { return true }; return false }.count }
     private var expiredCount: Int { items.filter { if case .expired = $0.freshness { return true }; return false }.count }
+
+    // MARK: 视图
 
     var body: some View {
         NavigationStack {
             ZStack {
                 PaperBackground()
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 14) {
+                    VStack(alignment: .leading, spacing: 12) {
                         filterBar
                         if expiringCount + expiredCount > 0 && filter == .all {
                             alertBanner
@@ -53,16 +102,17 @@ struct PantryListView: View {
                         if filtered.isEmpty {
                             emptyState
                         }
-                        ForEach(grouped, id: \.0.id) { category, rows in
-                            Text("\(category.name) · \(rows.count)")
-                                .font(.hand(20))
-                                .foregroundStyle(Color.ink)
-                                .padding(.top, 4)
-                            LazyVGrid(columns: [GridItem(.adaptive(minimum: 104), spacing: 10)], spacing: 10) {
-                                ForEach(rows) { item in
-                                    PantryCard(item: item)
-                                        .onTapGesture { editingItem = item }
+                        ForEach(sections) { sec in
+                            sectionHeader(sec)
+                            if isExpanded(sec.id) {
+                                LazyVGrid(columns: [GridItem(.adaptive(minimum: 104), spacing: 10)], spacing: 10) {
+                                    ForEach(sec.items) { item in
+                                        PantryCard(item: item)
+                                            .onTapGesture { editingItem = item }
+                                    }
                                 }
+                                .padding(.bottom, 4)
+                                .transition(.opacity.combined(with: .scale(scale: 0.97, anchor: .top)))
                             }
                         }
                     }
@@ -92,6 +142,61 @@ struct PantryListView: View {
         }
     }
 
+    // MARK: 分组标题(点击折叠/展开)
+
+    private func sectionHeader(_ sec: GroupSection) -> some View {
+        Button {
+            withAnimation(.snappy(duration: 0.28)) { toggle(sec.id) }
+        } label: {
+            HStack(spacing: 9) {
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 13, weight: .semibold))
+                    .rotationEffect(.degrees(isExpanded(sec.id) ? 90 : 0))
+                    .foregroundStyle(Color.ink.opacity(0.5))
+                if let emoji = sec.emoji { Text(emoji).font(.system(size: 17)) }
+                Text(sec.title).font(.hand(19)).foregroundStyle(Color.ink)
+                Text("\(sec.items.count)")
+                    .font(.hand(13))
+                    .padding(.horizontal, 7).padding(.vertical, 1)
+                    .background(Capsule().fill(Color.ink.opacity(0.08)))
+                    .foregroundStyle(Color.ink.opacity(0.6))
+                if sec.urgentCount > 0 {
+                    Text("⚠️\(sec.urgentCount)")
+                        .font(.hand(13))
+                        .foregroundStyle(Color.warnOrange)
+                }
+                Spacer(minLength: 6)
+                if !isExpanded(sec.id) {
+                    HStack(spacing: -11) {
+                        ForEach(Array(sec.items.prefix(4)), id: \.persistentModelID) { item in
+                            miniIcon(item)
+                        }
+                    }
+                    if sec.items.count > 4 {
+                        Text("…").font(.hand(14)).foregroundStyle(Color.ink.opacity(0.45))
+                    }
+                }
+            }
+        }
+        .buttonStyle(.plain)
+        .disabled(forceExpanded)
+        .doodleCard(padding: 10)
+    }
+
+    private func miniIcon(_ item: PantryItem) -> some View {
+        ZStack {
+            Circle()
+                .fill(Color.paperCard)
+                .overlay(Circle().strokeBorder(Color.ink.opacity(0.35), lineWidth: 1.1))
+            if let name = item.imageName, UIImage(named: name) != nil {
+                Image(name).resizable().scaledToFit().padding(3)
+            } else {
+                Text("🥡").font(.system(size: 14))
+            }
+        }
+        .frame(width: 34, height: 34)
+    }
+
     private var filterBar: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
@@ -105,6 +210,22 @@ struct PantryListView: View {
                 } label: {
                     TagChip(text: categoryFilter.flatMap { Catalog.shared.category(id: $0)?.name } ?? "分类 ▾", color: .ink, filled: categoryFilter != nil)
                 }
+                if !forceExpanded && !sections.isEmpty {
+                    Button {
+                        withAnimation(.snappy(duration: 0.3)) { toggleAll() }
+                    } label: {
+                        TagChip(text: allExpanded ? "全部收起" : "全部展开", color: .ink)
+                    }
+                    .buttonStyle(.plain)
+                }
+                Button {
+                    withAnimation(.snappy(duration: 0.3)) {
+                        groupModeRaw = groupMode == .category ? GroupMode.storage.rawValue : GroupMode.category.rawValue
+                    }
+                } label: {
+                    TagChip(text: groupMode == .category ? "🗂 按种类" : "🧊 按存放", color: .accentColor, filled: true)
+                }
+                .buttonStyle(.plain)
             }
             .padding(.vertical, 2)
         }
@@ -115,7 +236,7 @@ struct PantryListView: View {
             Text(expiredCount > 0 ? "🪰 有 \(expiredCount) 样已经过期,\(expiringCount) 样快过期了" : "⚠️ 有 \(expiringCount) 样快过期了,优先吃掉")
                 .font(.hand(16))
                 .foregroundStyle(Color.warnOrange)
-            Text("去「菜谱」页看看怎么消耗它们 →")
+            Text("点上面「临期/过期」筛选,或去「菜谱」页看看怎么消耗 →")
                 .font(.hand(13))
                 .foregroundStyle(Color.ink.opacity(0.6))
         }
