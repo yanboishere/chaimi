@@ -27,6 +27,7 @@ targets:
     info:
       path: Chaimi/Info.plist
       properties:
+        CFBundleDisplayName: 柴米
         UILaunchScreen:
           UIColorName: PaperBackground
         UISupportedInterfaceOrientations:
