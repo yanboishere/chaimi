@@ -9,6 +9,8 @@ struct SlotMachineView: View {
     @Query private var pantry: [PantryItem]
 
     @State private var dishType: DishType? = nil
+    @AppStorage("onlyInStockMode") private var onlyInStock = false
+    @State private var noMatchAlert = false
     @State private var strips: [[CatalogItem]] = [[], [], []]
     @State private var offsets: [CGFloat] = [1, 1, 1]
     @State private var spinning = false
@@ -65,6 +67,16 @@ struct SlotMachineView: View {
             .navigationTitle("今天吃什么")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .cancellationAction) { Button("关闭") { dismiss() } } }
+            .alert("这一类摇不出来了", isPresented: $noMatchAlert) {
+                Button("好") {}
+                if onlyInStock {
+                    Button("关掉「不用买菜」") { onlyInStock = false }
+                }
+            } message: {
+                Text(onlyInStock
+                     ? "现有库存凑不齐这一类里的任何一道菜。去「库存」补点货,或者关掉「不用买菜」。"
+                     : "这个类型下暂时没有菜谱。")
+            }
             .navigationDestination(for: String.self) { id in
                 if let recipe = RecipeBook.shared.recipes.first(where: { $0.id == id }) {
                     RecipeDetailView(recipe: recipe)
@@ -93,6 +105,15 @@ struct SlotMachineView: View {
     private var typeChips: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
+                Button {
+                    guard !spinning else { return }
+                    withAnimation(.snappy) { onlyInStock.toggle() }
+                } label: {
+                    TagChip(text: onlyInStock ? "🧺 不用买菜 ✓" : "🧺 不用买菜",
+                            color: onlyInStock ? .leafGreen : .ink, filled: onlyInStock)
+                }
+                .buttonStyle(.plain)
+                Divider().frame(height: 18)
                 chip(nil, "不限")
                 ForEach(DishType.allCases) { t in chip(t, t.label) }
             }
@@ -310,7 +331,11 @@ struct SlotMachineView: View {
 
     private func spin() {
         guard !spinning else { return }
-        guard let recipe = SlotEngine.pick(type: dishType, pantryIds: pantryIds, urgentIds: urgentIds, excluding: result?.id) else { return }
+        guard let recipe = SlotEngine.pick(type: dishType, pantryIds: pantryIds, urgentIds: urgentIds,
+                                           excluding: result?.id, onlyInStock: onlyInStock) else {
+            noMatchAlert = true
+            return
+        }
         let targets = SlotEngine.reelTargets(for: recipe)
         let pools = SlotEngine.pools(pantryCatalogIds: pantryIds)
 
@@ -486,6 +511,9 @@ struct TicketView: View {
     private var missing: [String] {
         recipe.ing.filter { !$0.isOptional && !pantryIds.contains($0.id) }.map(\.displayName)
     }
+    private var missingSeasonings: [String] {
+        recipe.sea.filter { !pantryIds.contains($0) }.compactMap { Catalog.shared.byId[$0]?.name }
+    }
     private var typeLabels: [String] {
         recipe.dishTypes.sorted { $0.rawValue < $1.rawValue }.map(\.label)
     }
@@ -524,9 +552,16 @@ struct TicketView: View {
             .padding(.vertical, 2)
             Text("⏱ \(recipe.time) 分钟 · 🔥 ≈\(Int(recipe.kcalPerServing)) 千卡/份")
                 .font(.hand(13)).foregroundStyle(Color.ink.opacity(0.6))
-            if !missing.isEmpty {
+            if missing.isEmpty {
+                Text("✅ 主料家里全都有,直接开火")
+                    .font(.hand(12)).foregroundStyle(Color.leafGreen)
+            } else {
                 Text("还缺:\(missing.joined(separator: "、")),得先买或换一道")
                     .font(.hand(12)).foregroundStyle(Color.warnOrange)
+            }
+            if !missingSeasonings.isEmpty {
+                Text("调料缺 \(missingSeasonings.prefix(3).joined(separator: "、"))\(missingSeasonings.count > 3 ? "等" : ""),可按口味替代或省略")
+                    .font(.hand(11)).foregroundStyle(Color.ink.opacity(0.45))
             }
             DashedLine()
             HStack(spacing: 12) {

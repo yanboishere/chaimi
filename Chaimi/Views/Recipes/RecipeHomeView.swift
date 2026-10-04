@@ -8,6 +8,7 @@ struct RecipeHomeView: View {
     @State private var tab = 0
     @State private var cuisine: String? = nil
     @State private var showSlot = false
+    @AppStorage("onlyInStockMode") private var onlyInStock = false
 
     /// catalogId → 是否临期/过期
     private var pantryMap: [String: Bool] {
@@ -29,7 +30,8 @@ struct RecipeHomeView: View {
     }
 
     private var recommendations: [RecipeRecommendation] {
-        RecipeRecommender.recommend(pantryIds: pantryMap, cuisine: cuisine)
+        let recs = RecipeRecommender.recommend(pantryIds: pantryMap, cuisine: cuisine)
+        return onlyInStock ? recs.filter { $0.missingIngredients.isEmpty } : recs
     }
 
     var body: some View {
@@ -93,6 +95,14 @@ struct RecipeHomeView: View {
 
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 8) {
+                        Button {
+                            withAnimation(.snappy) { onlyInStock.toggle() }
+                        } label: {
+                            TagChip(text: onlyInStock ? "🧺 不用买菜 ✓" : "🧺 不用买菜",
+                                    color: onlyInStock ? .leafGreen : .ink, filled: onlyInStock)
+                        }
+                        .buttonStyle(.plain)
+                        Divider().frame(height: 18)
                         cuisineChip(nil, "全部")
                         ForEach(RecipeBook.shared.cuisines) { c in cuisineChip(c.id, c.name) }
                     }
@@ -102,8 +112,10 @@ struct RecipeHomeView: View {
                 if recommendations.isEmpty {
                     VStack(spacing: 8) {
                         Image("recipe_fanqiechaodan").resizable().scaledToFit().frame(width: 90).opacity(0.8)
-                        Text("库存太少,还推荐不出菜").font(.hand(18)).foregroundStyle(Color.ink)
-                        Text("先去「库存」加点食材吧").font(.hand(14)).foregroundStyle(Color.ink.opacity(0.6))
+                        Text(onlyInStock ? "现有食材凑不齐一道菜" : "库存太少,还推荐不出菜")
+                            .font(.hand(18)).foregroundStyle(Color.ink)
+                        Text(onlyInStock ? "去「库存」补点货,或关掉「不用买菜」" : "先去「库存」加点食材吧")
+                            .font(.hand(14)).foregroundStyle(Color.ink.opacity(0.6))
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 40)

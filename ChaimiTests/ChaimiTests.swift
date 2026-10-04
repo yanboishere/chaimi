@@ -63,6 +63,22 @@ final class ChaimiTests: XCTestCase {
         XCTAssertFalse(t2.seasoning.id.isEmpty)
     }
 
+    func testSlotPickOnlyInStock() {
+        // 库存只够 番茄炒蛋/蒸蛋羹 这类:开「不用买菜」后摇出的菜必须主料全齐
+        let pantry: Set<String> = ["fanqie", "jidan", "xiaocong", "yan", "baitang", "shiyongyou", "xiangyou"]
+        for _ in 0..<30 {
+            guard let r = SlotEngine.pick(type: nil, pantryIds: pantry, urgentIds: [], onlyInStock: true) else {
+                return XCTFail("这套库存至少能摇出番茄炒蛋")
+            }
+            let missing = r.ing.filter { !$0.isOptional && !pantry.contains($0.id) }
+            XCTAssertTrue(missing.isEmpty, "「不用买菜」摇出了缺主料的菜:\(r.name) 缺 \(missing.map(\.id))")
+        }
+        XCTAssertNil(SlotEngine.pick(type: .noodle, pantryIds: [], urgentIds: [], onlyInStock: true),
+                     "空库存 + 面食 + 不用买菜 应该摇不出任何菜")
+        XCTAssertNotNil(SlotEngine.pick(type: .noodle, pantryIds: [], urgentIds: [], onlyInStock: false),
+                        "关掉模式后面食应能正常摇")
+    }
+
     func testSlotPickRespectsFilterAndExcluding() {
         for _ in 0..<40 {
             let r = SlotEngine.pick(type: .noodle, pantryIds: [], urgentIds: [])

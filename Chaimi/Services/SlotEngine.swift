@@ -45,10 +45,17 @@ enum SlotEngine {
     ///   - pantryIds: 在库 catalogId
     ///   - urgentIds: 临期/过期 catalogId(加权优先消耗)
     ///   - excluding: 上一次的结果,避免连抽重复
+    ///   - onlyInStock: 「不用买菜」模式——只要非可选主料全在库的菜(调料不作硬性要求)
     static func pick(type: DishType?, pantryIds: Set<String>, urgentIds: Set<String>,
                      excluding: String? = nil,
+                     onlyInStock: Bool = false,
                      recipes: [LocalRecipe] = RecipeBook.shared.recipes) -> LocalRecipe? {
         var candidates = recipes.filter { type == nil || $0.dishTypes.contains(type!) }
+        if onlyInStock {
+            candidates = candidates.filter { recipe in
+                recipe.ing.allSatisfy { $0.isOptional || pantryIds.contains($0.id) }
+            }
+        }
         if candidates.isEmpty { return nil }
         if candidates.count > 1, let excluding {
             candidates.removeAll { $0.id == excluding }
