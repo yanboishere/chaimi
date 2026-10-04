@@ -7,6 +7,7 @@ struct RecipeHomeView: View {
     @Query private var pantry: [PantryItem]
     @State private var tab = 0
     @State private var cuisine: String? = nil
+    @State private var showSlot = false
 
     /// catalogId → 是否临期/过期
     private var pantryMap: [String: Bool] {
@@ -47,12 +48,32 @@ struct RecipeHomeView: View {
                 }
             }
             .navigationTitle("今天吃什么")
+            .fullScreenCover(isPresented: $showSlot) { SlotMachineView() }
+            .onAppear { if DemoLaunch.wantsSlot { showSlot = true } }
         }
+    }
+
+    private var slotBanner: some View {
+        Button { showSlot = true } label: {
+            HStack(spacing: 12) {
+                Text("🎰").font(.system(size: 38))
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("选不出来?摇一下!").font(.hand(19)).foregroundStyle(Color.ink)
+                    Text("按库存抽一道菜,可筛肉菜/素菜/面食/米饭…")
+                        .font(.hand(12)).foregroundStyle(Color.ink.opacity(0.6))
+                }
+                Spacer(minLength: 0)
+                Image(systemName: "chevron.right").foregroundStyle(Color.ink.opacity(0.35))
+            }
+            .doodleCard()
+        }
+        .buttonStyle(.plain)
     }
 
     private var localList: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
+                slotBanner
                 if !urgentItems.isEmpty {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("⏰ 先吃它们").font(.hand(17)).foregroundStyle(Color.warnOrange)

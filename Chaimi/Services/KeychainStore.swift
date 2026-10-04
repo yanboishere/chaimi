@@ -1,30 +1,31 @@
 import Foundation
 import Security
 
-/// API Key 存取(Keychain, kSecClassGenericPassword)
+/// 本机钥匙串存取(kSecClassGenericPassword)
 enum KeychainStore {
     private static let service = "ng.yanbowa.chaimi"
-    private static let account = "anthropic_api_key"
+    static let apiKeyAccount = "anthropic_api_key"
+    static let appleUserAccount = "apple_user_id"
 
-    private static var baseQuery: [String: Any] {
+    private static func baseQuery(account: String) -> [String: Any] {
         [kSecClass as String: kSecClassGenericPassword,
          kSecAttrService as String: service,
          kSecAttrAccount as String: account]
     }
 
     @discardableResult
-    static func saveAPIKey(_ key: String) -> Bool {
-        let trimmed = key.trimmingCharacters(in: .whitespacesAndNewlines)
+    static func save(_ value: String, account: String) -> Bool {
+        let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty, let data = trimmed.data(using: .utf8) else { return false }
-        SecItemDelete(baseQuery as CFDictionary)
-        var query = baseQuery
+        SecItemDelete(baseQuery(account: account) as CFDictionary)
+        var query = baseQuery(account: account)
         query[kSecValueData as String] = data
         query[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
         return SecItemAdd(query as CFDictionary, nil) == errSecSuccess
     }
 
-    static func loadAPIKey() -> String? {
-        var query = baseQuery
+    static func load(account: String) -> String? {
+        var query = baseQuery(account: account)
         query[kSecReturnData as String] = true
         query[kSecMatchLimit as String] = kSecMatchLimitOne
         var out: AnyObject?
@@ -35,9 +36,16 @@ enum KeychainStore {
     }
 
     @discardableResult
-    static func deleteAPIKey() -> Bool {
-        SecItemDelete(baseQuery as CFDictionary) == errSecSuccess
+    static func delete(account: String) -> Bool {
+        SecItemDelete(baseQuery(account: account) as CFDictionary) == errSecSuccess
     }
 
+    // MARK: Anthropic API Key 便捷封装(保持旧调用点不变)
+
+    @discardableResult
+    static func saveAPIKey(_ key: String) -> Bool { save(key, account: apiKeyAccount) }
+    static func loadAPIKey() -> String? { load(account: apiKeyAccount) }
+    @discardableResult
+    static func deleteAPIKey() -> Bool { delete(account: apiKeyAccount) }
     static var hasKey: Bool { loadAPIKey() != nil }
 }

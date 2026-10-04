@@ -3,6 +3,65 @@ import XCTest
 
 final class ChaimiTests: XCTestCase {
 
+    // MARK: 老虎机
+
+    func testDishTypeClassification() {
+        func recipe(_ id: String) -> LocalRecipe { RecipeBook.shared.recipes.first { $0.id == id }! }
+        XCTAssertTrue(recipe("congyoubanmian").dishTypes.contains(.noodle), "葱油拌面是面食")
+        XCTAssertTrue(recipe("youpomian").dishTypes.contains(.noodle))
+        XCTAssertTrue(recipe("danchaofan").dishTypes.contains(.rice), "蛋炒饭是米饭类")
+        XCTAssertTrue(recipe("lawei_baozaifan").dishTypes.contains(.rice))
+        XCTAssertTrue(recipe("lawei_baozaifan").dishTypes.contains(.meatDish), "煲仔饭同时是肉菜")
+        XCTAssertTrue(recipe("liangbanhuanggua").dishTypes.contains(.cold))
+        XCTAssertTrue(recipe("liangbanhuanggua").dishTypes.contains(.vegDish))
+        XCTAssertTrue(recipe("mapodoufu").dishTypes.contains(.meatDish), "麻婆豆腐有肉末")
+        XCTAssertTrue(recipe("ganbiansijidou").dishTypes.contains(.vegDish), "可选肉末不影响素菜判定")
+        XCTAssertTrue(recipe("huiguorou").dishTypes.contains(.hot))
+        XCTAssertFalse(recipe("danchaofan").dishTypes.contains(.hot), "主食不算热菜")
+        // 每个类型都得有菜可摇
+        for type in DishType.allCases {
+            let count = RecipeBook.shared.recipes.filter { $0.dishTypes.contains(type) }.count
+            XCTAssertGreaterThanOrEqual(count, 2, "\(type.label) 至少要有 2 道菜,实际 \(count)")
+        }
+    }
+
+    func testSlotReelTargets() {
+        let huiguorou = RecipeBook.shared.recipes.first { $0.id == "huiguorou" }!
+        let t = SlotEngine.reelTargets(for: huiguorou)
+        XCTAssertEqual(t.veg.id, "qingjiao")
+        XCTAssertEqual(t.protein.id, "wuhuarou")
+        XCTAssertEqual(t.seasoning.id, "doubanjiang", "调料轮应避开盐糖油落在有记忆点的调料上")
+        // 素菜/甜汤也能给出三个落点,不崩
+        let sweet = RecipeBook.shared.recipes.first { $0.id == "yiner_xuelitang" }!
+        let t2 = SlotEngine.reelTargets(for: sweet)
+        XCTAssertFalse(t2.veg.id.isEmpty)
+        XCTAssertFalse(t2.protein.id.isEmpty)
+        XCTAssertFalse(t2.seasoning.id.isEmpty)
+    }
+
+    func testSlotPickRespectsFilterAndExcluding() {
+        for _ in 0..<40 {
+            let r = SlotEngine.pick(type: .noodle, pantryIds: [], urgentIds: [])
+            XCTAssertNotNil(r)
+            XCTAssertTrue(r!.dishTypes.contains(.noodle), "筛了面食就只能摇出面食,摇出了 \(r!.name)")
+        }
+        // 只剩两道面食时,排除上一道还能摇出另一道
+        let first = SlotEngine.pick(type: .noodle, pantryIds: [], urgentIds: [])!
+        for _ in 0..<20 {
+            let next = SlotEngine.pick(type: .noodle, pantryIds: [], urgentIds: [], excluding: first.id)
+            XCTAssertNotEqual(next?.id, first.id)
+        }
+    }
+
+    func testSlotPoolsFallBackToCatalog() {
+        let pools = SlotEngine.pools(pantryCatalogIds: [])
+        XCTAssertGreaterThan(pools.veg.count, 10, "空库存时蔬菜轮用目录兜底")
+        XCTAssertGreaterThan(pools.protein.count, 10)
+        XCTAssertGreaterThan(pools.seasoning.count, 10)
+        XCTAssertTrue(pools.veg.allSatisfy { $0.cat == "veg" || $0.cat == "mushroom" })
+        XCTAssertTrue(pools.seasoning.allSatisfy { $0.cat == "condiment" })
+    }
+
     // MARK: 过期提醒规划
 
     func testNotificationPlannerAggregatesPerDay() {

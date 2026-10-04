@@ -15,6 +15,8 @@
 		265EFE6773E87E04681604C0 /* PantryItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 724B256B8366082682ADFCA4 /* PantryItem.swift */; };
 		2B397143217677F2270C8278 /* RecipeHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B0043B6CC4C2B8C06F28757 /* RecipeHomeView.swift */; };
 		311F5FF7CCA383519A7E5D7C /* ScanSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E07823373E6DBBC2A6C74729 /* ScanSheet.swift */; };
+		32D025D96DE844666770844A /* SlotEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B102CB2BB93EB32002D18F42 /* SlotEngine.swift */; };
+		32E923115FA7B6F1FDAA767A /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B41EA589D3A63B3FC79EE259 /* SplashView.swift */; };
 		3A4D83C3EB334E2C2784FEBD /* ChaimiApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 551F0382E0019D87E8A52378 /* ChaimiApp.swift */; };
 		440006EB84CF358614A0DD6C /* OCRService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EC933426CE2113673499DB0 /* OCRService.swift */; };
 		555CB58F187421676722EB47 /* SampleReceipt.png in Resources */ = {isa = PBXBuildFile; fileRef = E97A99C3FFDFA0C5DAFF21C0 /* SampleReceipt.png */; };
@@ -30,6 +32,7 @@
 		D4EB9D10687625B3E9A8E36B /* ChaimiTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9929D31D0C712C473F65463B /* ChaimiTests.swift */; };
 		DBFF859A0AA533C66FE5DECB /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555984C9368595047824892 /* Theme.swift */; };
 		EAD64849A8BBEF530BC91361 /* PantryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EE3811ECAB39AC7C8636F78 /* PantryListView.swift */; };
+		ED1D3CD7000EA12052A46784 /* SlotMachineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39AE7926A62B83071C09DD2C /* SlotMachineView.swift */; };
 		ED9F38F0556351A2221E261C /* KeychainStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 429E1D06407F7712622A5DA9 /* KeychainStore.swift */; };
 		F06CD55D20EB38E1355971EB /* ClaudeAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33924BA9BDAAE9B9D456CC2A /* ClaudeAPI.swift */; };
 		F2DA6DDC7E99F5AC4B76BC23 /* AISearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B598EF6ECB57C50CE85261A /* AISearchView.swift */; };
@@ -55,6 +58,7 @@
 		32BFEDCDA2F3CFC8F4B8909F /* RootTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootTabView.swift; sourceTree = "<group>"; };
 		33924BA9BDAAE9B9D456CC2A /* ClaudeAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeAPI.swift; sourceTree = "<group>"; };
 		3682E718674B64846AFDA143 /* recipes.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = recipes.json; sourceTree = "<group>"; };
+		39AE7926A62B83071C09DD2C /* SlotMachineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotMachineView.swift; sourceTree = "<group>"; };
 		3B598EF6ECB57C50CE85261A /* AISearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AISearchView.swift; sourceTree = "<group>"; };
 		4075A585F7653F6E0AC2FEED /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		429E1D06407F7712622A5DA9 /* KeychainStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainStore.swift; sourceTree = "<group>"; };
@@ -73,9 +77,12 @@
 		981E9A80D0C1C34444B1C10B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		9929D31D0C712C473F65463B /* ChaimiTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChaimiTests.swift; sourceTree = "<group>"; };
 		9CCD5DB4DBD65FDC2EFF2AF5 /* ChaimiTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = ChaimiTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B102CB2BB93EB32002D18F42 /* SlotEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotEngine.swift; sourceTree = "<group>"; };
+		B41EA589D3A63B3FC79EE259 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		BE4937300508EBAF2FEC004F /* Chaimi.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Chaimi.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C7D0B46DB9D864EC8DB48762 /* CatalogPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogPickerView.swift; sourceTree = "<group>"; };
 		CC050C3FC9D1B6170ED4F903 /* LocalRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalRecipe.swift; sourceTree = "<group>"; };
+		D18DC0F1C0B9E38E9577C686 /* Chaimi.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Chaimi.entitlements; sourceTree = "<group>"; };
 		D8FAABB7B8B368DBF35E21F3 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		E07823373E6DBBC2A6C74729 /* ScanSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanSheet.swift; sourceTree = "<group>"; };
 		E97A99C3FFDFA0C5DAFF21C0 /* SampleReceipt.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SampleReceipt.png; sourceTree = "<group>"; };
@@ -91,6 +98,7 @@
 				8EC933426CE2113673499DB0 /* OCRService.swift */,
 				8C75034D03047FD33DBE097D /* ReceiptParser.swift */,
 				809D26391D9DA75293870133 /* RecipeRecommender.swift */,
+				B102CB2BB93EB32002D18F42 /* SlotEngine.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -99,6 +107,7 @@
 			isa = PBXGroup;
 			children = (
 				1FDCA5B3DE5C2397CB6D1535 /* Assets.xcassets */,
+				D18DC0F1C0B9E38E9577C686 /* Chaimi.entitlements */,
 				981E9A80D0C1C34444B1C10B /* Info.plist */,
 				BD390BB87CEE5F2630D8F342 /* App */,
 				A1F88E4A7D5FD62D3EFD6B2D /* Fonts */,
@@ -115,6 +124,7 @@
 			children = (
 				3B598EF6ECB57C50CE85261A /* AISearchView.swift */,
 				2B0043B6CC4C2B8C06F28757 /* RecipeHomeView.swift */,
+				39AE7926A62B83071C09DD2C /* SlotMachineView.swift */,
 			);
 			path = Recipes;
 			sourceTree = "<group>";
@@ -168,6 +178,7 @@
 			isa = PBXGroup;
 			children = (
 				551F0382E0019D87E8A52378 /* ChaimiApp.swift */,
+				B41EA589D3A63B3FC79EE259 /* SplashView.swift */,
 				7555984C9368595047824892 /* Theme.swift */,
 			);
 			path = App;
@@ -328,6 +339,9 @@
 				006E88A495EF767657ED07D1 /* RootTabView.swift in Sources */,
 				311F5FF7CCA383519A7E5D7C /* ScanSheet.swift in Sources */,
 				61B9D4AA9EBFC8B5B0D5D34F /* SettingsView.swift in Sources */,
+				32D025D96DE844666770844A /* SlotEngine.swift in Sources */,
+				ED1D3CD7000EA12052A46784 /* SlotMachineView.swift in Sources */,
+				32E923115FA7B6F1FDAA767A /* SplashView.swift in Sources */,
 				DBFF859A0AA533C66FE5DECB /* Theme.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -423,6 +437,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Chaimi/Chaimi.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = Chaimi/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "柴米";
@@ -458,6 +473,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Chaimi/Chaimi.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = Chaimi/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "柴米";

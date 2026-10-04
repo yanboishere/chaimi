@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import AuthenticationServices
 
 // MARK: - 设置
 
@@ -18,6 +19,10 @@ struct SettingsView: View {
     @State private var reminderDenied = false
     @State private var pendingPreviews: [NotificationService.PendingPreview] = []
 
+    @AppStorage("appleUserName") private var appleUserName = ""
+    @State private var appleSignedIn = KeychainStore.load(account: KeychainStore.appleUserAccount) != nil
+    @State private var appleError: String? = nil
+
     @State private var profile = BodyProfile()
     @State private var keyInput = ""
     @State private var keySaved = KeychainStore.hasKey
@@ -34,6 +39,7 @@ struct SettingsView: View {
             ZStack {
                 PaperBackground()
                 Form {
+                    accountSection
                     pantrySection
                     reminderSection
                     goalSection
@@ -47,6 +53,78 @@ struct SettingsView: View {
             .navigationTitle("设置")
             .onAppear { profile = BodyProfile.load(from: profileJSON) }
             .onChange(of: profile) { _, newValue in profileJSON = newValue.json }
+        }
+    }
+
+    // MARK: 账户(Sign in with Apple)
+
+    private var accountSection: some View {
+        Section {
+            if appleSignedIn {
+                HStack(spacing: 10) {
+                    Image(systemName: "person.crop.circle.badge.checkmark")
+                        .font(.title2).foregroundStyle(Color.leafGreen)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(appleUserName.isEmpty ? "已通过 Apple 登录" : "你好,\(appleUserName)")
+                            .font(.hand(16)).foregroundStyle(Color.ink)
+                        Text("身份已存入本机钥匙串").font(.hand(12)).foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                    Button("退出", role: .destructive) {
+                        KeychainStore.delete(account: KeychainStore.appleUserAccount)
+                        appleUserName = ""
+                        appleSignedIn = false
+                    }
+                    .font(.hand(14))
+                }
+            } else {
+                SignInWithAppleButton(.signIn) { request in
+                    request.requestedScopes = [.fullName]
+                } onCompletion: { result in
+                    handleAppleSignIn(result)
+                }
+                .signInWithAppleButtonStyle(.black)
+                .frame(height: 44)
+                .listRowBackground(Color.clear)
+                .listRowInsets(EdgeInsets())
+                if let appleError {
+                    Text(appleError).font(.hand(12)).foregroundStyle(Color.warnOrange)
+                }
+            }
+        } header: { Text("账户(可选)").font(.hand(13)) }
+        footer: {
+            Text("柴米的数据都在本机,登录只是为将来的 iCloud 同步/家庭共享预留身份。模拟器或未登录 Apple ID 的设备上无法完成授权。")
+                .font(.hand(11))
+        }
+        .task { await verifyAppleCredential() }
+    }
+
+    private func handleAppleSignIn(_ result: Result<ASAuthorization, Error>) {
+        switch result {
+        case .success(let auth):
+            guard let credential = auth.credential as? ASAuthorizationAppleIDCredential else { return }
+            KeychainStore.save(credential.user, account: KeychainStore.appleUserAccount)
+            if let name = credential.fullName {
+                let formatted = PersonNameComponentsFormatter.localizedString(from: name, style: .default)
+                if !formatted.isEmpty { appleUserName = formatted }
+            }
+            appleSignedIn = true
+            appleError = nil
+        case .failure(let error):
+            let code = (error as? ASAuthorizationError)?.code
+            if code == .canceled { appleError = nil; return }
+            appleError = "登录没成功(\(code.map { String($0.rawValue) } ?? "未知")),模拟器上需要先在系统设置登录 Apple ID。"
+        }
+    }
+
+    /// 凭据被用户在系统里撤销时,自动登出
+    private func verifyAppleCredential() async {
+        guard let userId = KeychainStore.load(account: KeychainStore.appleUserAccount) else { return }
+        let state = try? await ASAuthorizationAppleIDProvider().credentialState(forUserID: userId)
+        if state != .authorized && state != nil {
+            KeychainStore.delete(account: KeychainStore.appleUserAccount)
+            appleUserName = ""
+            appleSignedIn = false
         }
     }
 

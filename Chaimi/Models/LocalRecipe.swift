@@ -59,6 +59,44 @@ struct LocalRecipe: Codable, Identifiable, Hashable {
     }
 }
 
+// MARK: - 菜式类型(老虎机筛选用)
+
+enum DishType: String, CaseIterable, Identifiable {
+    case meatDish, vegDish, hot, cold, noodle, rice
+    var id: String { rawValue }
+    var label: String {
+        switch self {
+        case .meatDish: return "肉菜"
+        case .vegDish: return "素菜"
+        case .hot: return "热菜"
+        case .cold: return "冷菜"
+        case .noodle: return "面食"
+        case .rice: return "米饭"
+        }
+    }
+}
+
+extension LocalRecipe {
+    /// 面食判定用的主食 id
+    private static let noodleIds: Set<String> = ["xianmian", "guamian", "yidalimian", "mifen"]
+
+    /// 一道菜可同时命中多个类型(例:腊味煲仔饭 = 米饭 + 肉菜)
+    var dishTypes: Set<DishType> {
+        var out: Set<DishType> = []
+        let required = ing.filter { !$0.isOptional }
+        let hasMeat = required.contains { ing in
+            guard let item = ing.catalogItem else { return false }
+            return item.grp == .meat || item.grp == .aquatic
+        }
+        out.insert(hasMeat ? .meatDish : .vegDish)
+        if required.contains(where: { Self.noodleIds.contains($0.id) }) { out.insert(.noodle) }
+        if required.contains(where: { $0.id == "dami" }) { out.insert(.rice) }
+        if tags.contains("凉菜") { out.insert(.cold) }
+        else if !out.contains(.noodle) && !out.contains(.rice) { out.insert(.hot) }
+        return out
+    }
+}
+
 struct RecipeFile: Codable {
     let cuisines: [Cuisine]
     let recipes: [LocalRecipe]

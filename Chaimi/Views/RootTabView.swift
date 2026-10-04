@@ -7,6 +7,7 @@ struct RootTabView: View {
     @Environment(\.scenePhase) private var scenePhase
     @Query private var allItems: [PantryItem]
     @State private var selection: Int = DemoLaunch.initialTab
+    @State private var showSplash = !DemoLaunch.skipSplash
 
     var body: some View {
         TabView(selection: $selection) {
@@ -23,7 +24,7 @@ struct RootTabView: View {
                 .tabItem { Label("设置", systemImage: "gearshape.fill") }
                 .tag(3)
         }
-        .sheet(isPresented: Binding(get: { !didOfferSampleData && !DemoLaunch.isDemo }, set: { _ in didOfferSampleData = true })) {
+        .sheet(isPresented: Binding(get: { !didOfferSampleData && !DemoLaunch.isDemo && !showSplash }, set: { _ in didOfferSampleData = true })) {
             WelcomeSheet { wantsSample in
                 if wantsSample { SampleData.seed(into: context) }
                 didOfferSampleData = true
@@ -41,6 +42,15 @@ struct RootTabView: View {
         .onReceive(NotificationCenter.default.publisher(for: .chaimiOpenExpiring)) { _ in
             selection = 0
         }
+        .overlay {
+            if showSplash {
+                SplashView {
+                    withAnimation(.easeOut(duration: 0.4)) { showSplash = false }
+                }
+                .transition(.opacity)
+                .zIndex(10)
+            }
+        }
         .task {
             if DemoLaunch.wantsNotify {
                 UserDefaults.standard.set(true, forKey: "expiryReminderEnabled")
@@ -54,11 +64,19 @@ struct RootTabView: View {
     }
 }
 
-/// 截图/演示用的启动参数:-demoTab N 选 Tab,-demoData 预填示例数据,-demoScan 自动打开小票识别,-demoNotify 排演过期提醒
+/// 截图/演示用的启动参数:-demoTab N 选 Tab,-demoData 预填示例数据,-demoScan 自动打开小票识别,
+/// -demoNotify 排演过期提醒,-demoSlot 自动打开老虎机并摇一次,-noSplash 跳过开屏动画
 enum DemoLaunch {
     static var isDemo: Bool { ProcessInfo.processInfo.arguments.contains("-demoData") }
     static var wantsScan: Bool { ProcessInfo.processInfo.arguments.contains("-demoScan") }
     static var wantsNotify: Bool { ProcessInfo.processInfo.arguments.contains("-demoNotify") }
+    static var wantsSlot: Bool { ProcessInfo.processInfo.arguments.contains("-demoSlot") }
+    static var skipSplash: Bool {
+        let args = ProcessInfo.processInfo.arguments
+        // 其他演示模式默认跳过开屏,避免干扰定时截图;-demoSplash 专门演示开屏
+        if args.contains("-demoSplash") { return false }
+        return args.contains("-noSplash") || isDemo
+    }
     static var initialTab: Int {
         let args = ProcessInfo.processInfo.arguments
         guard let i = args.firstIndex(of: "-demoTab"), i + 1 < args.count else { return 0 }
