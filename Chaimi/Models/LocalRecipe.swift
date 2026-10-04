@@ -29,8 +29,10 @@ struct LocalRecipe: Codable, Identifiable, Hashable {
     let ing: [RecipeIngredient]
     let sea: [String]
     let steps: [String]
+    /// 组合菜谱共享图标池的资源名(dish_wok_3);手写精选为 nil → recipe_<id>
+    var img: String? = nil
 
-    var imageName: String { "recipe_\(id)" }
+    var imageName: String { img ?? "recipe_\(id)" }
     var cuisineName: String { RecipeBook.shared.cuisineName(cui) }
     var kcalPerServing: Double { kcal }
 
@@ -105,8 +107,11 @@ struct RecipeFile: Codable {
 final class RecipeBook {
     static let shared = RecipeBook()
     let cuisines: [Cuisine]
+    /// 52 道手写精选 + 11k+ 组合生成,启动时一次性合并
     let recipes: [LocalRecipe]
     private let cuisineById: [String: Cuisine]
+
+    private struct GeneratedFile: Codable { let recipes: [LocalRecipe] }
 
     private init() {
         guard let url = Bundle.main.url(forResource: "recipes", withExtension: "json"),
@@ -117,8 +122,15 @@ final class RecipeBook {
             return
         }
         cuisines = file.cuisines
-        recipes = file.recipes
         cuisineById = Dictionary(uniqueKeysWithValues: file.cuisines.map { ($0.id, $0) })
+
+        var all = file.recipes
+        if let genUrl = Bundle.main.url(forResource: "recipes_gen", withExtension: "json"),
+           let genData = try? Data(contentsOf: genUrl),
+           let gen = try? JSONDecoder().decode(GeneratedFile.self, from: genData) {
+            all.append(contentsOf: gen.recipes)
+        }
+        recipes = all
     }
 
     func cuisineName(_ id: String) -> String { cuisineById[id]?.name ?? id }

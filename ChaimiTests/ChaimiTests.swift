@@ -206,20 +206,44 @@ final class ChaimiTests: XCTestCase {
         }
     }
 
-    // MARK: 菜谱引用
+    // MARK: 菜谱库引用(52 手写 + 11k 组合生成)
 
-    func testRecipeIngredientsResolve() {
-        for recipe in RecipeBook.shared.recipes {
-            for ing in recipe.ing {
-                XCTAssertNotNil(Catalog.shared.byId[ing.id], "菜谱 \(recipe.id) 的主料 \(ing.id) 不在目录里")
-            }
-            for s in recipe.sea {
-                XCTAssertNotNil(Catalog.shared.byId[s], "菜谱 \(recipe.id) 的调料 \(s) 不在目录里")
-            }
-            XCTAssertNotNil(UIImage(named: recipe.imageName), "缺少菜谱图标 \(recipe.imageName)")
-            XCTAssertFalse(recipe.steps.isEmpty)
+    func testRecipeLibraryIntegrity() {
+        let all = RecipeBook.shared.recipes
+        XCTAssertGreaterThanOrEqual(all.count, 10000, "目标一万道,实际 \(all.count)")
+
+        var problems: [String] = []
+        var ids = Set<String>(), names = Set<String>()
+        let catalogIds = Set(Catalog.shared.items.map(\.id))
+        for r in all {
+            if !ids.insert(r.id).inserted { problems.append("重复 id \(r.id)") }
+            if !names.insert(r.name).inserted { problems.append("重名 \(r.name)") }
+            for ing in r.ing where !catalogIds.contains(ing.id) { problems.append("\(r.name) 主料缺目录 \(ing.id)") }
+            for s in r.sea where !catalogIds.contains(s) { problems.append("\(r.name) 调料缺目录 \(s)") }
+            if r.steps.count < 3 { problems.append("\(r.name) 步骤只有 \(r.steps.count) 步") }
+            if r.kcal < 50 || r.kcal > 1500 { problems.append("\(r.name) 热量离谱 \(r.kcal)") }
+            if r.serves < 1 || r.time < 5 { problems.append("\(r.name) 份数/时间异常") }
         }
-        XCTAssertGreaterThanOrEqual(RecipeBook.shared.recipes.count, 40)
+        XCTAssertTrue(problems.isEmpty, "共 \(problems.count) 处问题,前10条:\n\(problems.prefix(10).joined(separator: "\n"))")
+
+        // 图标资源:手写逐一存在,生成的共享池逐名存在
+        var missingIcons: [String] = []
+        for img in Set(all.map(\.imageName)) where UIImage(named: img) == nil {
+            missingIcons.append(img)
+        }
+        XCTAssertTrue(missingIcons.isEmpty, "缺图标:\(missingIcons.prefix(10))")
+    }
+
+    func testGeneratedRecipesAreReasonablyDistributed() {
+        let all = RecipeBook.shared.recipes
+        for type in DishType.allCases {
+            let count = all.filter { $0.dishTypes.contains(type) }.count
+            XCTAssertGreaterThanOrEqual(count, 50, "\(type.label) 太少:\(count)")
+        }
+        for cui in RecipeBook.shared.cuisines {
+            let count = all.filter { $0.cui == cui.id }.count
+            XCTAssertGreaterThanOrEqual(count, 10, "\(cui.name) 太少:\(count)")
+        }
     }
 
     // MARK: 小票解析

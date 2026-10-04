@@ -668,6 +668,19 @@ for (const r of recipes.recipes) {
   made++;
 }
 
+// 共享菜品图标池(组合菜谱 11k 道复用):7 模板 × 8 配色
+{
+  const POOL = ["#bc4749", "#e07a3f", "#6a994e", "#4aa3db", "#8a5a44", "#9e2a2b", "#52796f", "#b69121"];
+  for (const t of Object.keys(DISH).filter((k) => k !== "steamLines")) {
+    for (let i = 0; i < POOL.length; i++) {
+      const p = new Pic(`pool_${t}_${i}`);
+      DISH[t](p, POOL[i]);
+      writeImageset(xcassets, `dish_${t}_${i}`, renderPNG(p.svg(), 256));
+      made++;
+    }
+  }
+}
+
 // AppIcon 由 tools/gen-appicon.mjs 单独生成,这里不再覆盖
 
 // AccentColor + PaperBackground 色板
