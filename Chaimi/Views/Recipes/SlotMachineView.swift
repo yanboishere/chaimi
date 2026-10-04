@@ -46,7 +46,7 @@ struct SlotMachineView: View {
                             .padding(.bottom, 14)
                         HStack(alignment: .center, spacing: 8) {
                             machineBody
-                            LeverView(disabled: spinning) { spin() }
+                            LeverView(disabled: spinning) { pullSpin() }
                         }
                         .zIndex(1)                     // 机身盖住还没抽出来的票
                         ticketArea
@@ -298,7 +298,7 @@ struct SlotMachineView: View {
     @ViewBuilder
     private var ticketArea: some View {
         if ticketVisible, let recipe = result {
-            TicketView(recipe: recipe, no: ticketNo, pantryIds: pantryIds, stamped: stamped, onAgain: { reSpin() })
+            TicketView(recipe: recipe, no: ticketNo, pantryIds: pantryIds, stamped: stamped)
                 .fixedSize(horizontal: false, vertical: true)
                 .background(
                     GeometryReader { geo in
@@ -339,8 +339,9 @@ struct SlotMachineView: View {
         return out
     }
 
-    private func reSpin() {
-        // 旧票被"吸"回打印口,再开新一轮
+    private func pullSpin() {
+        // 有旧票先"吸"回打印口,再开新一轮;没票直接开摇
+        guard ticketVisible, printProgress > 0 else { return spin() }
         SoundPlayer.shared.play("slot_print")
         withAnimation(.easeIn(duration: 0.35)) { printProgress = 0 }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.38) { spin() }
@@ -521,7 +522,6 @@ struct TicketView: View {
     let no: Int
     let pantryIds: Set<String>
     var stamped: Bool = true
-    var onAgain: () -> Void
 
     private var targets: (veg: CatalogItem, protein: CatalogItem, seasoning: CatalogItem) {
         SlotEngine.reelTargets(for: recipe)
@@ -582,16 +582,10 @@ struct TicketView: View {
                     .font(.hand(11)).foregroundStyle(Color.ink.opacity(0.45))
             }
             DashedLine()
-            HStack(spacing: 12) {
-                NavigationLink(value: recipe.id) {
-                    Text("看菜谱做起来").font(.hand(16)).frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.borderedProminent)
-                Button { onAgain() } label: {
-                    Text("再摇").font(.hand(16)).frame(width: 74)
-                }
-                .buttonStyle(.bordered)
+            NavigationLink(value: recipe.id) {
+                Text("看菜谱做起来").font(.hand(16)).frame(maxWidth: .infinity)
             }
+            .buttonStyle(.borderedProminent)
             .padding(.horizontal, 18)
             .padding(.bottom, 20)
         }
