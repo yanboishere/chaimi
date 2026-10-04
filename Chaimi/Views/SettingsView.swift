@@ -219,6 +219,12 @@ struct SettingsView: View {
 
     private var goalSection: some View {
         Section {
+            Picker(selection: Binding(
+                get: { UserDefaults.standard.string(forKey: "budgetMode") ?? "fixed" },
+                set: { UserDefaults.standard.set($0, forKey: "budgetMode") })) {
+                Text("固定上限").tag("fixed")
+                Text("跟随 Apple 健康(实时)").tag("health")
+            } label: { Text("预算模式").font(.hand(16)) }
             HStack {
                 Text("每日上限").font(.hand(16))
                 Spacer()
@@ -239,7 +245,7 @@ struct SettingsView: View {
                 }
             }
         } header: { Text("卡路里目标").font(.hand(13)) }
-        footer: { Text("估算用 Mifflin-St Jeor 公式,减脂目标下限 1200 千卡;只是参考,不是医疗建议。").font(.hand(11)) }
+        footer: { Text("「跟随健康」模式:今日预算 = 基础代谢 + 当天运动消耗 + 目标盈亏,随运动实时变化(在记录页连接 Apple 健康);固定模式用上面的每日上限。估算用 Mifflin-St Jeor 公式,减脂下限 1200 千卡;只是参考,不是医疗建议。").font(.hand(11)) }
     }
 
     // MARK: 身体参数

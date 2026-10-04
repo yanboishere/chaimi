@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftData
 import UIKit
 
-// MARK: - 摇一摇今天吃什么(老虎机)
+// MARK: - 摇一摇今天吃什么(拟物化老虎机)
 
 struct SlotMachineView: View {
     @Environment(\.dismiss) private var dismiss
@@ -10,13 +10,20 @@ struct SlotMachineView: View {
 
     @State private var dishType: DishType? = nil
     @State private var strips: [[CatalogItem]] = [[], [], []]
-    @State private var offsets: [CGFloat] = [0, 0, 0]
+    @State private var offsets: [CGFloat] = [1, 1, 1]
     @State private var spinning = false
     @State private var result: LocalRecipe? = nil
-    @State private var showTicket = false
+    @State private var lampTick = false
+    @State private var soundOn = SoundPlayer.shared.enabled
+
+    // 出票动画
+    @State private var ticketVisible = false
+    @State private var printProgress: CGFloat = 0
+    @State private var stamped = false
+    @State private var ticketFly = false
     @State private var ticketNo = Int.random(in: 1...9999)
 
-    private let rowHeight: CGFloat = 74
+    private let rowHeight: CGFloat = 70
     private let reelLabels = ["蔬", "荤", "味"]
 
     private var pantryIds: Set<String> {
@@ -31,22 +38,23 @@ struct SlotMachineView: View {
             ZStack {
                 PaperBackground()
                 ScrollView {
-                    VStack(spacing: 16) {
+                    VStack(spacing: 14) {
                         typeChips
-                        machine
-                        lever
-                        if showTicket, let recipe = result {
-                            TicketView(recipe: recipe, no: ticketNo, pantryIds: pantryIds, onAgain: { spin() })
-                                .transition(.move(edge: .bottom).combined(with: .opacity))
-                        } else if !spinning {
-                            Text("选个想吃的类型,拉一下杆\n从你家库存里摇出今天这顿饭")
+                        HStack(alignment: .center, spacing: 8) {
+                            machineBody
+                            LeverView(disabled: spinning) { spin() }
+                        }
+                        ticketArea
+                        if !ticketVisible && !spinning {
+                            Text("👉 往下拽右边的拉杆\n从你家库存里摇出今天这顿")
                                 .font(.hand(14))
                                 .multilineTextAlignment(.center)
                                 .foregroundStyle(Color.ink.opacity(0.55))
-                                .padding(.top, 6)
+                                .padding(.top, 2)
                         }
                     }
-                    .padding(16)
+                    .padding(14)
+                    .padding(.bottom, 30)
                 }
             }
             .navigationTitle("今天吃什么")
@@ -64,6 +72,14 @@ struct SlotMachineView: View {
                 try? await Task.sleep(for: .milliseconds(700))
                 spin()
             }
+        }
+        .task(id: spinning) {
+            // 转动时招牌小灯交替闪
+            while spinning && !Task.isCancelled {
+                lampTick.toggle()
+                try? await Task.sleep(for: .milliseconds(260))
+            }
+            lampTick = false
         }
     }
 
@@ -89,53 +105,163 @@ struct SlotMachineView: View {
         .buttonStyle(.plain)
     }
 
-    // MARK: 机身与转轮
+    // MARK: 机身
 
-    private var machine: some View {
+    private let woodLight = Color(red: 0.93, green: 0.78, blue: 0.55)
+    private let wood = Color(red: 0.85, green: 0.64, blue: 0.37)
+    private let woodDark = Color(red: 0.70, green: 0.48, blue: 0.24)
+
+    private var machineBody: some View {
         VStack(spacing: 10) {
-            HStack(spacing: 14) {
+            marquee
+            reelWindow
+            printerSlot
+        }
+        .padding(14)
+        .background(
+            RoundedRectangle(cornerRadius: 22, style: .continuous)
+                .fill(LinearGradient(colors: [woodLight, wood, woodDark], startPoint: .top, endPoint: .bottom))
+                .shadow(color: Color.ink.opacity(0.35), radius: 5, x: 2, y: 5)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 22, style: .continuous)
+                .strokeBorder(Color.ink.opacity(0.75), lineWidth: 2.2)
+        )
+        .overlay(alignment: .topLeading) { rivet.padding(8) }
+        .overlay(alignment: .topTrailing) { soundToggle.padding(6) }
+        .overlay(alignment: .bottomLeading) { rivet.padding(8) }
+        .overlay(alignment: .bottomTrailing) { rivet.padding(8) }
+    }
+
+    private var rivet: some View {
+        Circle()
+            .fill(RadialGradient(colors: [Color.white.opacity(0.9), Color.gray], center: .topLeading, startRadius: 0, endRadius: 7))
+            .frame(width: 8, height: 8)
+            .overlay(Circle().stroke(Color.ink.opacity(0.5), lineWidth: 0.8))
+    }
+
+    private var soundToggle: some View {
+        Button {
+            soundOn.toggle()
+            SoundPlayer.shared.enabled = soundOn
+        } label: {
+            Image(systemName: soundOn ? "speaker.wave.2.fill" : "speaker.slash.fill")
+                .font(.system(size: 11, weight: .bold))
+                .foregroundStyle(Color.ink.opacity(0.65))
+                .frame(width: 24, height: 24)
+                .background(Circle().fill(woodLight.opacity(0.8)))
+                .overlay(Circle().stroke(Color.ink.opacity(0.4), lineWidth: 1))
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var marquee: some View {
+        HStack(spacing: 10) {
+            lamp(on: spinning && lampTick)
+            Text("今 天 吃 什 么")
+                .font(.hand(17))
+                .foregroundStyle(Color(red: 1, green: 0.96, blue: 0.86))
+                .shadow(color: .black.opacity(0.35), radius: 1, x: 0, y: 1)
+            lamp(on: spinning && !lampTick)
+        }
+        .padding(.horizontal, 16).padding(.vertical, 7)
+        .background(
+            Capsule()
+                .fill(LinearGradient(colors: [woodDark, Color(red: 0.5, green: 0.33, blue: 0.15)], startPoint: .top, endPoint: .bottom))
+                .shadow(color: .black.opacity(0.3), radius: 2, y: 2)
+        )
+        .overlay(Capsule().strokeBorder(Color.ink.opacity(0.6), lineWidth: 1.5))
+    }
+
+    private func lamp(on: Bool) -> some View {
+        Circle()
+            .fill(on
+                  ? AnyShapeStyle(RadialGradient(colors: [.white, .yellow, .orange], center: .center, startRadius: 0, endRadius: 7))
+                  : AnyShapeStyle(Color(red: 0.45, green: 0.3, blue: 0.14)))
+            .frame(width: 11, height: 11)
+            .overlay(Circle().stroke(Color.ink.opacity(0.6), lineWidth: 1))
+            .shadow(color: on ? .yellow.opacity(0.9) : .clear, radius: 5)
+    }
+
+    private var reelWindow: some View {
+        VStack(spacing: 5) {
+            HStack(spacing: 0) {
                 ForEach(0..<3, id: \.self) { i in
-                    VStack(spacing: 6) {
-                        Text(reelLabels[i])
-                            .font(.hand(15))
-                            .foregroundStyle(Color.ink.opacity(0.6))
-                        ReelView(strip: strips[i], offsetRows: offsets[i], rowHeight: rowHeight)
-                            .frame(width: 86, height: rowHeight * 3)
-                            .background(RoundedRectangle(cornerRadius: 12).fill(Color.paper))
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .strokeBorder(Color.ink.opacity(0.45), lineWidth: 1.6)
-                            )
+                    Text(reelLabels[i])
+                        .font(.hand(13))
+                        .foregroundStyle(Color(red: 1, green: 0.96, blue: 0.86).opacity(0.9))
+                        .frame(maxWidth: .infinity)
+                }
+            }
+            HStack(spacing: 0) {
+                ForEach(0..<3, id: \.self) { i in
+                    ReelView(strip: strips[i], offsetRows: offsets[i], rowHeight: rowHeight)
+                        .frame(maxWidth: .infinity, maxHeight: rowHeight * 3)
+                    if i < 2 {
+                        Rectangle().fill(Color.ink.opacity(0.35)).frame(width: 1.5)
                     }
                 }
             }
-            .overlay(alignment: .center) {
-                // 中奖行指示框
-                RoundedRectangle(cornerRadius: 10)
-                    .strokeBorder(Color.accentColor, style: StrokeStyle(lineWidth: 2.4, dash: [8, 4]))
-                    .frame(height: rowHeight)
-                    .offset(y: 14)
-                    .padding(.horizontal, -2)
-                    .allowsHitTesting(false)
-            }
+            .background(Color(red: 0.99, green: 0.97, blue: 0.90))
+            .overlay(centerRowMarker)
+            .overlay(cylinderShading)
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .strokeBorder(Color.ink.opacity(0.8), lineWidth: 2)
+                    .shadow(color: .black.opacity(0.5), radius: 3, y: 2)
+            )
         }
-        .doodleCard(padding: 16)
     }
 
-    private var lever: some View {
-        Button { spin() } label: {
-            HStack(spacing: 8) {
-                Text(spinning ? "🎰" : "🕹️")
-                    .rotationEffect(.degrees(spinning ? 14 : 0))
-                Text(spinning ? "转轮摇晃中…" : (showTicket ? "不满意?再摇一次" : "拉一下!"))
-            }
-            .font(.hand(20))
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 10)
+    /// 圆筒曲面:上下压暗 + 中线玻璃反光
+    private var cylinderShading: some View {
+        VStack(spacing: 0) {
+            LinearGradient(colors: [.black.opacity(0.38), .clear], startPoint: .top, endPoint: .bottom)
+                .frame(height: rowHeight * 0.85)
+            Spacer(minLength: 0)
+            LinearGradient(colors: [.clear, .black.opacity(0.38)], startPoint: .top, endPoint: .bottom)
+                .frame(height: rowHeight * 0.85)
         }
-        .buttonStyle(.borderedProminent)
-        .disabled(spinning)
+        .overlay(
+            Rectangle()
+                .fill(LinearGradient(colors: [.white.opacity(0.0), .white.opacity(0.22), .white.opacity(0.0)], startPoint: .top, endPoint: .bottom))
+                .frame(height: 16)
+                .offset(y: -rowHeight * 0.32)
+        )
+        .allowsHitTesting(false)
+    }
+
+    private var centerRowMarker: some View {
+        HStack {
+            Triangle().fill(Color.tomatoRed).frame(width: 9, height: 14)
+            Spacer()
+            Triangle().fill(Color.tomatoRed).frame(width: 9, height: 14).rotationEffect(.degrees(180))
+        }
+        .padding(.horizontal, 2)
+        .allowsHitTesting(false)
+    }
+
+    private var printerSlot: some View {
+        RoundedRectangle(cornerRadius: 4)
+            .fill(LinearGradient(colors: [.black.opacity(0.85), .black.opacity(0.55)], startPoint: .top, endPoint: .bottom))
+            .frame(height: 9)
+            .padding(.horizontal, 30)
+            .overlay(RoundedRectangle(cornerRadius: 4).stroke(Color.ink.opacity(0.6), lineWidth: 1).padding(.horizontal, 30))
+    }
+
+    // MARK: 出票区
+
+    @ViewBuilder
+    private var ticketArea: some View {
+        if ticketVisible, let recipe = result {
+            TicketView(recipe: recipe, no: ticketNo, pantryIds: pantryIds, stamped: stamped, onAgain: { reSpin() })
+                .frame(maxHeight: printProgress >= 1 ? nil : 470 * printProgress, alignment: .top)
+                .clipped()
+                .rotationEffect(.degrees(ticketFly ? 10 : (stamped ? -1.2 : 0)))
+                .offset(y: ticketFly ? 160 : -16)
+                .opacity(ticketFly ? 0 : 1)
+        }
     }
 
     // MARK: 逻辑
@@ -148,7 +274,7 @@ struct SlotMachineView: View {
         }
     }
 
-    /// 生成长度为 length 的轮带:随机前缀 + 目标(倒数第二行,正好停在中奖行)+ 一行垫底
+    /// 轮带:随机前缀 + 目标(倒数第二行,停轮时正好在中奖行)+ 一行垫底
     private func buildStrip(pool: [CatalogItem], target: CatalogItem, length: Int) -> [CatalogItem] {
         var out: [CatalogItem] = []
         var source = pool.isEmpty ? [target] : pool
@@ -162,25 +288,34 @@ struct SlotMachineView: View {
         return out
     }
 
+    private func reSpin() {
+        withAnimation(.easeIn(duration: 0.22)) { ticketFly = true }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.24) { spin() }
+    }
+
     private func spin() {
         guard !spinning else { return }
         guard let recipe = SlotEngine.pick(type: dishType, pantryIds: pantryIds, urgentIds: urgentIds, excluding: result?.id) else { return }
         let targets = SlotEngine.reelTargets(for: recipe)
         let pools = SlotEngine.pools(pantryCatalogIds: pantryIds)
 
-        withAnimation(.easeIn(duration: 0.18)) { showTicket = false }
+        ticketVisible = false
+        ticketFly = false
+        stamped = false
+        printProgress = 0
         spinning = true
         result = recipe
         ticketNo = Int.random(in: 1...9999)
 
         let targetList = [targets.veg, targets.protein, targets.seasoning]
         let poolList = [pools.veg, pools.protein, pools.seasoning]
-        let lengths = [20, 24, 28]
+        let lengths = [20, 26, 32]
         for i in 0..<3 {
             strips[i] = buildStrip(pool: poolList[i], target: targetList[i], length: lengths[i])
             offsets[i] = 0
         }
 
+        SoundPlayer.shared.play("slot_spin")
         let durations: [Double] = [1.1, 1.65, 2.2]
         DispatchQueue.main.async {
             for i in 0..<3 {
@@ -191,12 +326,107 @@ struct SlotMachineView: View {
                     UIImpactFeedbackGenerator(style: .rigid).impactOccurred()
                 }
             }
-            DispatchQueue.main.asyncAfter(deadline: .now() + durations[2] + 0.35) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + durations[2] + 0.25) {
                 spinning = false
-                UINotificationFeedbackGenerator().notificationOccurred(.success)
-                withAnimation(.spring(response: 0.5, dampingFraction: 0.72)) { showTicket = true }
+                printTicket()
             }
         }
+    }
+
+    private func printTicket() {
+        ticketVisible = true
+        SoundPlayer.shared.play("slot_print")
+        withAnimation(.easeOut(duration: 0.95)) { printProgress = 1 }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.05) {
+            SoundPlayer.shared.play("slot_stamp")
+            UINotificationFeedbackGenerator().notificationOccurred(.success)
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) { stamped = true }
+        }
+    }
+}
+
+// MARK: - 拉杆
+
+struct LeverView: View {
+    var disabled: Bool
+    var onPull: () -> Void
+
+    @State private var pull: CGFloat = 0
+    private let maxPull: CGFloat = 92
+    private let trackHeight: CGFloat = 150
+
+    var body: some View {
+        VStack(spacing: 2) {
+            // 滑槽 + 杆 + 红球
+            ZStack(alignment: .top) {
+                Capsule()
+                    .fill(LinearGradient(colors: [.black.opacity(0.45), .black.opacity(0.2)], startPoint: .leading, endPoint: .trailing))
+                    .frame(width: 10, height: trackHeight)
+                    .overlay(Capsule().stroke(Color.ink.opacity(0.5), lineWidth: 1))
+                Capsule()
+                    .fill(LinearGradient(colors: [Color(white: 0.85), Color(white: 0.55)], startPoint: .leading, endPoint: .trailing))
+                    .frame(width: 7, height: trackHeight - pull - 24)
+                    .offset(y: pull + 20)
+                Circle()
+                    .fill(RadialGradient(colors: [Color(red: 1, green: 0.55, blue: 0.5), Color.tomatoRed, Color(red: 0.5, green: 0.12, blue: 0.1)], center: .init(x: 0.35, y: 0.3), startRadius: 2, endRadius: 24))
+                    .frame(width: 36, height: 36)
+                    .overlay(Circle().stroke(Color.ink.opacity(0.7), lineWidth: 1.6))
+                    .shadow(color: .black.opacity(0.35), radius: 3, y: 2)
+                    .offset(y: pull)
+            }
+            .frame(height: trackHeight + 14)
+            // 底座
+            RoundedRectangle(cornerRadius: 4)
+                .fill(LinearGradient(colors: [Color(white: 0.75), Color(white: 0.45)], startPoint: .top, endPoint: .bottom))
+                .frame(width: 30, height: 12)
+                .overlay(RoundedRectangle(cornerRadius: 4).stroke(Color.ink.opacity(0.6), lineWidth: 1.2))
+            Text(disabled ? "…" : "拉我")
+                .font(.hand(12))
+                .foregroundStyle(Color.ink.opacity(0.55))
+        }
+        .opacity(disabled ? 0.55 : 1)
+        .contentShape(Rectangle())
+        .gesture(
+            DragGesture(minimumDistance: 2)
+                .onChanged { value in
+                    guard !disabled else { return }
+                    let newPull = min(maxPull, max(0, value.translation.height))
+                    if newPull >= maxPull * 0.62 && pull < maxPull * 0.62 {
+                        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                    }
+                    pull = newPull
+                }
+                .onEnded { _ in
+                    let fire = pull >= maxPull * 0.62 && !disabled
+                    withAnimation(.spring(response: 0.32, dampingFraction: 0.5)) { pull = 0 }
+                    if fire {
+                        SoundPlayer.shared.play("slot_lever")
+                        onPull()
+                    }
+                }
+        )
+        .onTapGesture {
+            guard !disabled else { return }
+            SoundPlayer.shared.play("slot_lever")
+            withAnimation(.easeIn(duration: 0.12)) { pull = maxPull }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.14) {
+                withAnimation(.spring(response: 0.32, dampingFraction: 0.5)) { pull = 0 }
+                onPull()
+            }
+        }
+        .accessibilityLabel("拉杆,开始摇菜")
+        .accessibilityAddTraits(.isButton)
+    }
+}
+
+struct Triangle: Shape {
+    func path(in rect: CGRect) -> Path {
+        var p = Path()
+        p.move(to: CGPoint(x: 0, y: rect.midY))
+        p.addLine(to: CGPoint(x: rect.width, y: 0))
+        p.addLine(to: CGPoint(x: rect.width, y: rect.height))
+        p.closeSubpath()
+        return p
     }
 }
 
@@ -214,6 +444,7 @@ private struct ReelView: View {
                     .resizable().scaledToFit()
                     .frame(width: rowHeight - 18, height: rowHeight - 18)
                     .frame(height: rowHeight)
+                    .frame(maxWidth: .infinity)
             }
         }
         .offset(y: -offsetRows * rowHeight + rowHeight)
@@ -228,6 +459,7 @@ struct TicketView: View {
     let recipe: LocalRecipe
     let no: Int
     let pantryIds: Set<String>
+    var stamped: Bool = true
     var onAgain: () -> Void
 
     private var targets: (veg: CatalogItem, protein: CatalogItem, seasoning: CatalogItem) {
@@ -306,10 +538,10 @@ struct TicketView: View {
                 .padding(.horizontal, 8).padding(.vertical, 5)
                 .background(RoundedRectangle(cornerRadius: 5).fill(Color.tomatoRed.opacity(0.88)))
                 .rotationEffect(.degrees(-10))
+                .scaleEffect(stamped ? 1 : 2.2)
+                .opacity(stamped ? 1 : 0)
                 .offset(x: -22, y: -56)
         }
-        .rotationEffect(.degrees(-1.2))
-        .padding(.top, 4)
     }
 
     private func reelStamp(_ item: CatalogItem) -> some View {

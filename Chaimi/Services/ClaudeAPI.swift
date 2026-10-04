@@ -52,6 +52,12 @@ struct WebRecipe: Decodable, Identifiable {
 
 struct Citation: Hashable { let title: String; let url: String }
 
+struct BudgetAdvice: Decodable {
+    let suggestedDailyLimit: Double
+    let summary: String
+    let tips: [String]
+}
+
 actor ClaudeAPI {
     static let shared = ClaudeAPI()
 
@@ -251,6 +257,33 @@ actor ClaudeAPI {
         ])
         let recipes = try decodeStructured(Payload.self, from: structured).recipes
         return (recipes, citations)
+    }
+
+    // MARK: 5. 定每日卡路里预算(结构化)
+
+    func budgetAdvice(context: String) async throws -> BudgetAdvice {
+        let schema: [String: Any] = [
+            "type": "object", "additionalProperties": false,
+            "required": ["suggestedDailyLimit", "summary", "tips"],
+            "properties": [
+                "suggestedDailyLimit": ["type": "number", "description": "建议的每日摄入上限(千卡,整数,不低于1200)"],
+                "summary": ["type": "string", "description": "一两句话说明这个数怎么来的"],
+                "tips": ["type": "array", "items": ["type": "string"], "description": "3-5条具体可执行的建议"],
+            ],
+        ]
+        let system = """
+        你是讲证据的中文营养师。根据用户的身体参数、目标,以及最近7天的摄入与 Apple 健康的运动消耗数据,\
+        给出一个可持续的每日摄入上限(减脂每日亏空建议 300-500 千卡,不低于 1200;数据波动大时取保守值),\
+        并解释依据。参考《中国居民膳食指南(2022)》。
+        """
+        let body: [String: Any] = [
+            "model": model, "max_tokens": 1500,
+            "system": system,
+            "output_config": ["effort": "low", "format": ["type": "json_schema", "schema": schema]],
+            "messages": [["role": "user", "content": context]],
+        ]
+        let resp = try await send(body, timeout: 120)
+        return try decodeStructured(BudgetAdvice.self, from: resp)
     }
 
     // MARK: 4. 膳食建议

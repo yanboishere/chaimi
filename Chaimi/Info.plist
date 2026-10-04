@@ -24,6 +24,8 @@
 	<false/>
 	<key>NSCameraUsageDescription</key>
 	<string>柴米需要使用相机拍摄购物小票或食材照片,用于识别入库。</string>
+	<key>NSHealthShareUsageDescription</key>
+	<string>柴米读取你的活动能量和静息能量,用来计算今天还能吃多少千卡。数据只在本机使用。</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>柴米需要访问相册以选择小票或食材照片,用于识别入库。</string>
 	<key>UIAppFonts</key>

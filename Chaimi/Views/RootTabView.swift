@@ -71,6 +71,7 @@ enum DemoLaunch {
     static var wantsScan: Bool { ProcessInfo.processInfo.arguments.contains("-demoScan") }
     static var wantsNotify: Bool { ProcessInfo.processInfo.arguments.contains("-demoNotify") }
     static var wantsSlot: Bool { ProcessInfo.processInfo.arguments.contains("-demoSlot") }
+    static var wantsHealth: Bool { ProcessInfo.processInfo.arguments.contains("-demoHealth") }
     static var skipSplash: Bool {
         let args = ProcessInfo.processInfo.arguments
         // 其他演示模式默认跳过开屏,避免干扰定时截图;-demoSplash 专门演示开屏

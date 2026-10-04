@@ -3,6 +3,30 @@ import XCTest
 
 final class ChaimiTests: XCTestCase {
 
+    // MARK: Apple 健康 / 预算
+
+    func testTargetCalc() {
+        XCTAssertEqual(TargetCalc.dynamicBudget(bmr: 1600, todayActive: 300, goalDelta: -300), 1600)
+        XCTAssertEqual(TargetCalc.dynamicBudget(bmr: 1600, todayActive: 0, goalDelta: 0), 1600)
+        XCTAssertEqual(TargetCalc.dynamicBudget(bmr: 1000, todayActive: 0, goalDelta: -500), 1200, "减脂下限 1200")
+        XCTAssertEqual(TargetCalc.dynamicBudget(bmr: 1600, todayActive: -50, goalDelta: 0), 1600, "负消耗按 0 处理")
+        XCTAssertEqual(TargetCalc.calibratedTDEE(bmr: 1600, avgActive: 320), 1920)
+        XCTAssertEqual(TargetCalc.netBalance(intake: 1800, bmr: 1600, active: 400), -200)
+        XCTAssertEqual(TargetCalc.fatGrams(fromKcal: 7700), 1000, accuracy: 0.01)
+    }
+
+    func testMockHealthProvider() async {
+        let mock = MockHealthProvider()
+        let today = await mock.todayActiveKcal()
+        XCTAssertEqual(today, 286)
+        let week = await mock.dailyActiveKcal(daysBack: 7)
+        XCTAssertEqual(week.count, 7)
+        let cal = Calendar.current
+        XCTAssertTrue(cal.isDateInToday(week.last!.day), "最后一天应是今天")
+        XCTAssertEqual(Set(week.map(\.day)).count, 7, "七天不重复")
+        XCTAssertTrue(week.allSatisfy { $0.activeKcal > 0 })
+    }
+
     // MARK: 老虎机
 
     func testDishTypeClassification() {

@@ -24,13 +24,19 @@
 		5FA5070E4E80A64288261F80 /* CalorieEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80DEF950DB8EF65BB3C447EF /* CalorieEntry.swift */; };
 		61B9D4AA9EBFC8B5B0D5D34F /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8FAABB7B8B368DBF35E21F3 /* SettingsView.swift */; };
 		6E164C70B11EB704AFE32F15 /* CalorieView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 079C77936FA67B8949A70DD4 /* CalorieView.swift */; };
+		705E77F9CAECF7C2111B08BB /* slot_print.wav in Resources */ = {isa = PBXBuildFile; fileRef = CE971378352320C8CFEA0F58 /* slot_print.wav */; };
+		78CC174196BB1A74C7841806 /* slot_lever.wav in Resources */ = {isa = PBXBuildFile; fileRef = 062310617E9D377931D1497F /* slot_lever.wav */; };
 		82075DC9D025D6DBD04111FA /* Catalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5164DDC9B3D05CB1D532B865 /* Catalog.swift */; };
+		8F8A5DC8D5A4D212CABEB355 /* slot_stamp.wav in Resources */ = {isa = PBXBuildFile; fileRef = B3F20AFB1DAD81F2EDEFDBC2 /* slot_stamp.wav */; };
+		9AAA7ABCA59F597B9D2B529F /* SoundPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02F34C2E359CA449D4CF97E7 /* SoundPlayer.swift */; };
 		BBB97AE231AF2F2AE2CDC990 /* ReceiptParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C75034D03047FD33DBE097D /* ReceiptParser.swift */; };
 		BD1EF275AD7315DADAAD7F08 /* ZCOOLKuaiLe-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 94F502C5AFC789FDD138D8EF /* ZCOOLKuaiLe-Regular.ttf */; };
 		C3A9476ABB7D2246AD471A33 /* CatalogPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7D0B46DB9D864EC8DB48762 /* CatalogPickerView.swift */; };
 		C5612C3906F2996C66B794C9 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4075A585F7653F6E0AC2FEED /* NotificationService.swift */; };
+		C7564F87FC61E4F93017AF08 /* HealthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AAC41DECABE1BFEDE94BBAB /* HealthService.swift */; };
 		D4EB9D10687625B3E9A8E36B /* ChaimiTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9929D31D0C712C473F65463B /* ChaimiTests.swift */; };
 		DBFF859A0AA533C66FE5DECB /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555984C9368595047824892 /* Theme.swift */; };
+		E41FEFCC1DCF29EC5D4D7962 /* slot_spin.wav in Resources */ = {isa = PBXBuildFile; fileRef = 286472C3FAD07D360FF70532 /* slot_spin.wav */; };
 		EAD64849A8BBEF530BC91361 /* PantryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EE3811ECAB39AC7C8636F78 /* PantryListView.swift */; };
 		ED1D3CD7000EA12052A46784 /* SlotMachineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39AE7926A62B83071C09DD2C /* SlotMachineView.swift */; };
 		ED9F38F0556351A2221E261C /* KeychainStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 429E1D06407F7712622A5DA9 /* KeychainStore.swift */; };
@@ -51,9 +57,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		02F34C2E359CA449D4CF97E7 /* SoundPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundPlayer.swift; sourceTree = "<group>"; };
+		062310617E9D377931D1497F /* slot_lever.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = slot_lever.wav; sourceTree = "<group>"; };
 		079C77936FA67B8949A70DD4 /* CalorieView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalorieView.swift; sourceTree = "<group>"; };
 		1DBCA0263409D94B2238E2C8 /* BodyProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodyProfile.swift; sourceTree = "<group>"; };
 		1FDCA5B3DE5C2397CB6D1535 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		286472C3FAD07D360FF70532 /* slot_spin.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = slot_spin.wav; sourceTree = "<group>"; };
 		2B0043B6CC4C2B8C06F28757 /* RecipeHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeHomeView.swift; sourceTree = "<group>"; };
 		32BFEDCDA2F3CFC8F4B8909F /* RootTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootTabView.swift; sourceTree = "<group>"; };
 		33924BA9BDAAE9B9D456CC2A /* ClaudeAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClaudeAPI.swift; sourceTree = "<group>"; };
@@ -76,12 +85,15 @@
 		94F502C5AFC789FDD138D8EF /* ZCOOLKuaiLe-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ZCOOLKuaiLe-Regular.ttf"; sourceTree = "<group>"; };
 		981E9A80D0C1C34444B1C10B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		9929D31D0C712C473F65463B /* ChaimiTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChaimiTests.swift; sourceTree = "<group>"; };
+		9AAC41DECABE1BFEDE94BBAB /* HealthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthService.swift; sourceTree = "<group>"; };
 		9CCD5DB4DBD65FDC2EFF2AF5 /* ChaimiTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = ChaimiTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B102CB2BB93EB32002D18F42 /* SlotEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlotEngine.swift; sourceTree = "<group>"; };
+		B3F20AFB1DAD81F2EDEFDBC2 /* slot_stamp.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = slot_stamp.wav; sourceTree = "<group>"; };
 		B41EA589D3A63B3FC79EE259 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		BE4937300508EBAF2FEC004F /* Chaimi.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Chaimi.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C7D0B46DB9D864EC8DB48762 /* CatalogPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogPickerView.swift; sourceTree = "<group>"; };
 		CC050C3FC9D1B6170ED4F903 /* LocalRecipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalRecipe.swift; sourceTree = "<group>"; };
+		CE971378352320C8CFEA0F58 /* slot_print.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = slot_print.wav; sourceTree = "<group>"; };
 		D18DC0F1C0B9E38E9577C686 /* Chaimi.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Chaimi.entitlements; sourceTree = "<group>"; };
 		D8FAABB7B8B368DBF35E21F3 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		E07823373E6DBBC2A6C74729 /* ScanSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanSheet.swift; sourceTree = "<group>"; };
@@ -93,12 +105,14 @@
 			isa = PBXGroup;
 			children = (
 				33924BA9BDAAE9B9D456CC2A /* ClaudeAPI.swift */,
+				9AAC41DECABE1BFEDE94BBAB /* HealthService.swift */,
 				429E1D06407F7712622A5DA9 /* KeychainStore.swift */,
 				4075A585F7653F6E0AC2FEED /* NotificationService.swift */,
 				8EC933426CE2113673499DB0 /* OCRService.swift */,
 				8C75034D03047FD33DBE097D /* ReceiptParser.swift */,
 				809D26391D9DA75293870133 /* RecipeRecommender.swift */,
 				B102CB2BB93EB32002D18F42 /* SlotEngine.swift */,
+				02F34C2E359CA449D4CF97E7 /* SoundPlayer.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -135,6 +149,10 @@
 				4D587B1AF55AABE14A803AA4 /* catalog.json */,
 				3682E718674B64846AFDA143 /* recipes.json */,
 				E97A99C3FFDFA0C5DAFF21C0 /* SampleReceipt.png */,
+				062310617E9D377931D1497F /* slot_lever.wav */,
+				CE971378352320C8CFEA0F58 /* slot_print.wav */,
+				286472C3FAD07D360FF70532 /* slot_spin.wav */,
+				B3F20AFB1DAD81F2EDEFDBC2 /* slot_stamp.wav */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -309,6 +327,10 @@
 				BD1EF275AD7315DADAAD7F08 /* ZCOOLKuaiLe-Regular.ttf in Resources */,
 				07223FFF97FF9BA28895FD00 /* catalog.json in Resources */,
 				F3B0B780EE8415EE64A3F8D5 /* recipes.json in Resources */,
+				78CC174196BB1A74C7841806 /* slot_lever.wav in Resources */,
+				705E77F9CAECF7C2111B08BB /* slot_print.wav in Resources */,
+				E41FEFCC1DCF29EC5D4D7962 /* slot_spin.wav in Resources */,
+				8F8A5DC8D5A4D212CABEB355 /* slot_stamp.wav in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -327,6 +349,7 @@
 				C3A9476ABB7D2246AD471A33 /* CatalogPickerView.swift in Sources */,
 				3A4D83C3EB334E2C2784FEBD /* ChaimiApp.swift in Sources */,
 				F06CD55D20EB38E1355971EB /* ClaudeAPI.swift in Sources */,
+				C7564F87FC61E4F93017AF08 /* HealthService.swift in Sources */,
 				ED9F38F0556351A2221E261C /* KeychainStore.swift in Sources */,
 				18294D0626CFE58FA110215D /* LocalRecipe.swift in Sources */,
 				C5612C3906F2996C66B794C9 /* NotificationService.swift in Sources */,
@@ -341,6 +364,7 @@
 				61B9D4AA9EBFC8B5B0D5D34F /* SettingsView.swift in Sources */,
 				32D025D96DE844666770844A /* SlotEngine.swift in Sources */,
 				ED1D3CD7000EA12052A46784 /* SlotMachineView.swift in Sources */,
+				9AAA7ABCA59F597B9D2B529F /* SoundPlayer.swift in Sources */,
 				32E923115FA7B6F1FDAA767A /* SplashView.swift in Sources */,
 				DBFF859A0AA533C66FE5DECB /* Theme.swift in Sources */,
 			);
