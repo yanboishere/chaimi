@@ -9,6 +9,7 @@ struct RecipeHomeView: View {
     @State private var cuisine: String? = nil
     @State private var showSlot = false
     @AppStorage("onlyInStockMode") private var onlyInStock = false
+    @AppStorage("onlyInStockStrict") private var strictSeasonings = false
 
     /// catalogId → 是否临期/过期
     private var pantryMap: [String: Bool] {
@@ -31,7 +32,10 @@ struct RecipeHomeView: View {
 
     private var recommendations: [RecipeRecommendation] {
         let recs = RecipeRecommender.recommend(pantryIds: pantryMap, cuisine: cuisine)
-        return onlyInStock ? recs.filter { $0.missingIngredients.isEmpty } : recs
+        guard onlyInStock else { return recs }
+        return recs.filter {
+            $0.missingIngredients.isEmpty && (!strictSeasonings || $0.missingSeasonings.isEmpty)
+        }
     }
 
     var body: some View {
@@ -102,6 +106,16 @@ struct RecipeHomeView: View {
                                     color: onlyInStock ? .leafGreen : .ink, filled: onlyInStock)
                         }
                         .buttonStyle(.plain)
+                        if onlyInStock {
+                            Button {
+                                withAnimation(.snappy) { strictSeasonings.toggle() }
+                            } label: {
+                                TagChip(text: strictSeasonings ? "调料也齐 ✓" : "调料也要齐",
+                                        color: strictSeasonings ? .leafGreen : .ink, filled: strictSeasonings)
+                            }
+                            .buttonStyle(.plain)
+                            .transition(.opacity.combined(with: .scale(scale: 0.9)))
+                        }
                         Divider().frame(height: 18)
                         cuisineChip(nil, "全部")
                         ForEach(RecipeBook.shared.cuisines) { c in cuisineChip(c.id, c.name) }

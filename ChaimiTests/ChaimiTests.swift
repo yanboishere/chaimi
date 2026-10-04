@@ -79,6 +79,27 @@ final class ChaimiTests: XCTestCase {
                         "关掉模式后面食应能正常摇")
     }
 
+    func testSlotPickStrictSeasonings() {
+        // 库存:拍黄瓜的主料+全部调料;番茄炒蛋主料齐但缺食用油
+        let pantry: Set<String> = ["huanggua", "dasuan", "fanqie", "jidan", "xiaocong",
+                                   "xiangcu", "shengchou", "baitang", "xiangyou", "lajiangjiang", "yan"]
+        for _ in 0..<20 {
+            guard let r = SlotEngine.pick(type: nil, pantryIds: pantry, urgentIds: [],
+                                          onlyInStock: true, strictSeasonings: true) else {
+                return XCTFail("严格模式下至少拍黄瓜是全齐的")
+            }
+            XCTAssertTrue(r.sea.allSatisfy { pantry.contains($0) }, "严格模式摇出了缺调料的菜:\(r.name)")
+            XCTAssertTrue(r.ing.allSatisfy { $0.isOptional || pantry.contains($0.id) })
+        }
+        // 同一库存,非严格模式应该能摇出缺油的番茄炒蛋(多试几次总会出现)
+        var sawLooseMatch = false
+        for _ in 0..<60 {
+            if let r = SlotEngine.pick(type: nil, pantryIds: pantry, urgentIds: [], onlyInStock: true),
+               !r.sea.allSatisfy({ pantry.contains($0) }) { sawLooseMatch = true; break }
+        }
+        XCTAssertTrue(sawLooseMatch, "非严格模式应允许缺调料的菜")
+    }
+
     func testSlotPickRespectsFilterAndExcluding() {
         for _ in 0..<40 {
             let r = SlotEngine.pick(type: .noodle, pantryIds: [], urgentIds: [])

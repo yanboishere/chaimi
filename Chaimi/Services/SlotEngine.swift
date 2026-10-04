@@ -26,8 +26,10 @@ enum SlotEngine {
         let veg = items.first { $0.cat == "veg" || $0.cat == "mushroom" }
             ?? items.first { $0.grp == .veg || $0.grp == .fruit }
             ?? Catalog.shared.byId["xiaobaicai"]!
+        // 荤位:肉/海鲜 → 豆制品/蛋 → 菜谱里其余真实主料(别虚构不存在的配料)→ 最后才兜底鸡蛋
         let protein = items.first { $0.cat == "meat" || $0.cat == "seafood" }
             ?? items.first { $0.cat == "bean" || $0.grp == .egg }
+            ?? items.first { $0.id != veg.id }
             ?? Catalog.shared.byId["jidan"]!
         // 调料优先挑有记忆点的,别总是落在盐和油上
         let basics: Set<String> = ["yan", "shiyongyou", "baitang", "dianfen", "liaojiu", "jijing"]
@@ -46,14 +48,21 @@ enum SlotEngine {
     ///   - urgentIds: 临期/过期 catalogId(加权优先消耗)
     ///   - excluding: 上一次的结果,避免连抽重复
     ///   - onlyInStock: 「不用买菜」模式——只要非可选主料全在库的菜(调料不作硬性要求)
+    ///   - strictSeasonings: 严格模式(需配合 onlyInStock)——调料也必须全在库
     static func pick(type: DishType?, pantryIds: Set<String>, urgentIds: Set<String>,
                      excluding: String? = nil,
                      onlyInStock: Bool = false,
+                     strictSeasonings: Bool = false,
                      recipes: [LocalRecipe] = RecipeBook.shared.recipes) -> LocalRecipe? {
         var candidates = recipes.filter { type == nil || $0.dishTypes.contains(type!) }
         if onlyInStock {
             candidates = candidates.filter { recipe in
                 recipe.ing.allSatisfy { $0.isOptional || pantryIds.contains($0.id) }
+            }
+            if strictSeasonings {
+                candidates = candidates.filter { recipe in
+                    recipe.sea.allSatisfy { pantryIds.contains($0) }
+                }
             }
         }
         if candidates.isEmpty { return nil }
