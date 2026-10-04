@@ -16,11 +16,11 @@ struct SlotMachineView: View {
     @State private var lampTick = false
     @State private var soundOn = SoundPlayer.shared.enabled
 
-    // 出票动画
+    // 出票动画:凭条从出票口整体下滑抽出,被机身"遮住"的部分不可见
     @State private var ticketVisible = false
     @State private var printProgress: CGFloat = 0
     @State private var stamped = false
-    @State private var ticketFly = false
+    @State private var ticketHeight: CGFloat = 470
     @State private var ticketNo = Int.random(in: 1...9999)
 
     private let rowHeight: CGFloat = 70
@@ -38,19 +38,24 @@ struct SlotMachineView: View {
             ZStack {
                 PaperBackground()
                 ScrollView {
-                    VStack(spacing: 14) {
+                    VStack(spacing: 0) {
                         typeChips
+                            .padding(.bottom, 14)
                         HStack(alignment: .center, spacing: 8) {
                             machineBody
                             LeverView(disabled: spinning) { spin() }
                         }
+                        .zIndex(1)                     // 机身盖住还没抽出来的票
                         ticketArea
+                            .padding(.leading, 10)
+                            .padding(.trailing, 72)    // 对准机身(避开右侧拉杆),从出票口正下方出来
                         if !ticketVisible && !spinning {
                             Text("👉 往下拽右边的拉杆\n从你家库存里摇出今天这顿")
                                 .font(.hand(14))
                                 .multilineTextAlignment(.center)
                                 .foregroundStyle(Color.ink.opacity(0.55))
-                                .padding(.top, 2)
+                                .frame(maxWidth: .infinity)
+                                .padding(.top, 16)
                         }
                     }
                     .padding(14)
@@ -250,17 +255,25 @@ struct SlotMachineView: View {
             .overlay(RoundedRectangle(cornerRadius: 4).stroke(Color.ink.opacity(0.6), lineWidth: 1).padding(.horizontal, 30))
     }
 
-    // MARK: 出票区
+    // MARK: 出票区(凭条从机身底部缝隙滑出)
 
     @ViewBuilder
     private var ticketArea: some View {
         if ticketVisible, let recipe = result {
             TicketView(recipe: recipe, no: ticketNo, pantryIds: pantryIds, stamped: stamped, onAgain: { reSpin() })
-                .frame(maxHeight: printProgress >= 1 ? nil : 470 * printProgress, alignment: .top)
+                .fixedSize(horizontal: false, vertical: true)
+                .background(
+                    GeometryReader { geo in
+                        Color.clear
+                            .onAppear { ticketHeight = geo.size.height }
+                            .onChange(of: geo.size.height) { _, h in ticketHeight = h }
+                    }
+                )
+                .rotationEffect(.degrees(0), anchor: .top)
+                // 底边对齐容器底:容器变高 = 凭条被一点点"抽"下来
+                .frame(height: max(1, ticketHeight * printProgress), alignment: .bottom)
                 .clipped()
-                .rotationEffect(.degrees(ticketFly ? 10 : (stamped ? -1.2 : 0)))
-                .offset(y: ticketFly ? 160 : -16)
-                .opacity(ticketFly ? 0 : 1)
+                .padding(.top, -14)   // 容器顶对准机身底部的出票缝(机身 zIndex 更高,盖住未出部分)
         }
     }
 
@@ -289,8 +302,10 @@ struct SlotMachineView: View {
     }
 
     private func reSpin() {
-        withAnimation(.easeIn(duration: 0.22)) { ticketFly = true }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.24) { spin() }
+        // 旧票被"吸"回打印口,再开新一轮
+        SoundPlayer.shared.play("slot_print")
+        withAnimation(.easeIn(duration: 0.35)) { printProgress = 0 }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.38) { spin() }
     }
 
     private func spin() {
@@ -300,7 +315,6 @@ struct SlotMachineView: View {
         let pools = SlotEngine.pools(pantryCatalogIds: pantryIds)
 
         ticketVisible = false
-        ticketFly = false
         stamped = false
         printProgress = 0
         spinning = true
@@ -336,8 +350,12 @@ struct SlotMachineView: View {
     private func printTicket() {
         ticketVisible = true
         SoundPlayer.shared.play("slot_print")
-        withAnimation(.easeOut(duration: 0.95)) { printProgress = 1 }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.05) {
+        // 两段式:先匀速抽出大半,最后"噔"地一下拽到底
+        withAnimation(.easeInOut(duration: 0.78)) { printProgress = 0.9 }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+            withAnimation(.spring(response: 0.28, dampingFraction: 0.6)) { printProgress = 1 }
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.12) {
             SoundPlayer.shared.play("slot_stamp")
             UINotificationFeedbackGenerator().notificationOccurred(.success)
             withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) { stamped = true }
