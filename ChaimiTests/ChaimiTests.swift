@@ -206,11 +206,11 @@ final class ChaimiTests: XCTestCase {
         }
     }
 
-    // MARK: 菜谱库引用(52 手写 + 11k 组合生成)
+    // MARK: 菜谱库引用(51 手写 + 231 组合生成,全部通过下厨房全量取证 ≥10 攻略)
 
     func testRecipeLibraryIntegrity() {
         let all = RecipeBook.shared.recipes
-        XCTAssertGreaterThanOrEqual(all.count, 10000, "目标一万道,实际 \(all.count)")
+        XCTAssertGreaterThanOrEqual(all.count, 270, "全量取证后应有 282 道左右,实际 \(all.count)")
 
         var problems: [String] = []
         var ids = Set<String>(), names = Set<String>()
@@ -235,14 +235,15 @@ final class ChaimiTests: XCTestCase {
     }
 
     func testGeneratedRecipesAreReasonablyDistributed() {
+        // 取证定稿分布:肉171/素111/热230/冷23/面13/饭16;菜系最少的江浙、东北各 5
         let all = RecipeBook.shared.recipes
         for type in DishType.allCases {
             let count = all.filter { $0.dishTypes.contains(type) }.count
-            XCTAssertGreaterThanOrEqual(count, 50, "\(type.label) 太少:\(count)")
+            XCTAssertGreaterThanOrEqual(count, 10, "\(type.label) 太少:\(count)")
         }
         for cui in RecipeBook.shared.cuisines {
             let count = all.filter { $0.cui == cui.id }.count
-            XCTAssertGreaterThanOrEqual(count, 10, "\(cui.name) 太少:\(count)")
+            XCTAssertGreaterThanOrEqual(count, 4, "\(cui.name) 太少:\(count)")
         }
     }
 

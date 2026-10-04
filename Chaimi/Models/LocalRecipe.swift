@@ -107,7 +107,7 @@ struct RecipeFile: Codable {
 final class RecipeBook {
     static let shared = RecipeBook()
     let cuisines: [Cuisine]
-    /// 52 道手写精选 + 11k+ 组合生成,启动时一次性合并
+    /// 51 道手写精选 + 231 道组合生成(全部经下厨房全量取证 ≥10 攻略),启动时一次性合并
     let recipes: [LocalRecipe]
     private let cuisineById: [String: Cuisine]
 
